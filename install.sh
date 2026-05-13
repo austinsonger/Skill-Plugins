@@ -18,6 +18,10 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PLUGINS_DIR="$SCRIPT_DIR/plugins"
 CLAUDE_COMMANDS_DIR="$HOME/.claude/commands"
+AGENTS_SKILLS_DIR="$HOME/.agents/skills"
+
+# Install target: "claude" (default), "agents", or "both"
+TARGET="claude"
 
 # Colors
 RED='\033[0;31m'
@@ -73,6 +77,12 @@ show_help() {
     echo -e "  ${CYAN}--uninstall, -u${NC}         Remove all installed commands"
     echo -e "  ${CYAN}--status, -s${NC}            Show installed vs available plugins"
     echo -e "  ${CYAN}--update${NC}                Update all installed plugins"
+    echo -e "  ${CYAN}--target, -t TARGET${NC}     Install target: claude | agents | both (default: claude)"
+    echo ""
+    echo -e "${BOLD}TARGETS${NC}"
+    echo -e "  ${MAGENTA}claude${NC}   ~/.claude/commands/         (Claude Code slash commands)"
+    echo -e "  ${MAGENTA}agents${NC}   ~/.agents/skills/<name>/    (Agent Skills format — SKILL.md w/ frontmatter)"
+    echo -e "  ${MAGENTA}both${NC}     install to both locations"
     echo ""
     echo -e "${BOLD}CATEGORIES${NC}"
     echo -e "  ${MAGENTA}backend${NC}       Backend architecture, API design, database optimization"
@@ -106,6 +116,52 @@ show_help() {
     echo ""
 }
 
+# Extract a short description from a command markdown file.
+# Strategy: first non-heading, non-empty paragraph line after the H1.
+# Falls back to the H1 itself (with " Plugin" stripped).
+extract_description() {
+    local src="$1"
+    local desc
+    desc=$(awk '
+        /^# / && !seen { seen=1; next }
+        seen && NF && !/^#/ { print; exit }
+    ' "$src")
+    if [ -z "$desc" ]; then
+        desc=$(head -n 1 "$src" | sed 's/^#* *//' | sed 's/ Plugin$//')
+    fi
+    # Truncate to ~200 chars and escape double quotes for YAML
+    echo "$desc" | cut -c1-200 | sed 's/"/\\"/g'
+}
+
+# Install one .md as an Agent Skill: ~/.agents/skills/<skill-name>/SKILL.md
+# with YAML frontmatter (name, description) prepended.
+install_as_agent_skill() {
+    local src="$1"
+    local skill_name
+    skill_name=$(basename "$src" .md)
+    local skill_dir="$AGENTS_SKILLS_DIR/$skill_name"
+    local dest="$skill_dir/SKILL.md"
+
+    if [ -f "$dest" ] && [ "$FORCE" != "true" ]; then
+        SKIPPED=$((SKIPPED + 1))
+        return 1
+    fi
+
+    mkdir -p "$skill_dir"
+    local description
+    description=$(extract_description "$src")
+
+    {
+        echo "---"
+        echo "name: $skill_name"
+        echo "description: \"$description\""
+        echo "---"
+        echo ""
+        cat "$src"
+    } > "$dest"
+    return 0
+}
+
 install_plugin() {
     local plugin_name="$1"
     local plugin_dir="$PLUGINS_DIR/$plugin_name/commands"
@@ -117,24 +173,29 @@ install_plugin() {
 
     local count=0
     for cmd_file in "$plugin_dir"/*.md; do
-        if [ -f "$cmd_file" ]; then
-            local filename=$(basename "$cmd_file")
-            TOTAL=$((TOTAL + 1))
+        [ -f "$cmd_file" ] || continue
+        local filename=$(basename "$cmd_file")
+        TOTAL=$((TOTAL + 1))
+        local did_install=0
 
-            if [ -f "$CLAUDE_COMMANDS_DIR/$filename" ]; then
-                if [ "$FORCE" = "true" ]; then
-                    cp "$cmd_file" "$CLAUDE_COMMANDS_DIR/$filename"
-                    count=$((count + 1))
-                    INSTALLED=$((INSTALLED + 1))
-                else
-                    SKIPPED=$((SKIPPED + 1))
-                    continue
-                fi
+        if [ "$TARGET" = "claude" ] || [ "$TARGET" = "both" ]; then
+            if [ -f "$CLAUDE_COMMANDS_DIR/$filename" ] && [ "$FORCE" != "true" ]; then
+                SKIPPED=$((SKIPPED + 1))
             else
                 cp "$cmd_file" "$CLAUDE_COMMANDS_DIR/$filename"
-                count=$((count + 1))
-                INSTALLED=$((INSTALLED + 1))
+                did_install=1
             fi
+        fi
+
+        if [ "$TARGET" = "agents" ] || [ "$TARGET" = "both" ]; then
+            if install_as_agent_skill "$cmd_file"; then
+                did_install=1
+            fi
+        fi
+
+        if [ $did_install -eq 1 ]; then
+            count=$((count + 1))
+            INSTALLED=$((INSTALLED + 1))
         fi
     done
 
@@ -327,6 +388,17 @@ while [ $# -gt 0 ]; do
             MODE="update"
             shift
             ;;
+        --target|-t)
+            TARGET="$2"
+            case "$TARGET" in
+                claude|agents|both) ;;
+                *)
+                    echo -e "${RED}Invalid target: $TARGET (use: claude, agents, both)${NC}"
+                    exit 1
+                    ;;
+            esac
+            shift 2
+            ;;
         --help|-h)
             show_help
             exit 0
@@ -339,9 +411,15 @@ while [ $# -gt 0 ]; do
                 for cmd in "$dir/commands/"*.md; do
                     if [ -f "$cmd" ]; then
                         filename=$(basename "$cmd")
+                        skill_name=$(basename "$filename" .md)
                         if [ -f "$CLAUDE_COMMANDS_DIR/$filename" ]; then
                             rm "$CLAUDE_COMMANDS_DIR/$filename"
-                            echo -e "${RED}  [-] Removed: /$(basename "$filename" .md)${NC}"
+                            echo -e "${RED}  [-] Removed (claude): /$skill_name${NC}"
+                            removed=$((removed + 1))
+                        fi
+                        if [ -d "$AGENTS_SKILLS_DIR/$skill_name" ]; then
+                            rm -rf "$AGENTS_SKILLS_DIR/$skill_name"
+                            echo -e "${RED}  [-] Removed (agents): $skill_name${NC}"
                             removed=$((removed + 1))
                         fi
                     fi
@@ -371,8 +449,13 @@ if ! command -v claude > /dev/null 2>&1; then
     echo ""
 fi
 
-# Create commands directory
-mkdir -p "$CLAUDE_COMMANDS_DIR"
+# Create target directories
+if [ "$TARGET" = "claude" ] || [ "$TARGET" = "both" ]; then
+    mkdir -p "$CLAUDE_COMMANDS_DIR"
+fi
+if [ "$TARGET" = "agents" ] || [ "$TARGET" = "both" ]; then
+    mkdir -p "$AGENTS_SKILLS_DIR"
+fi
 
 # Track installation
 INSTALLED=0
