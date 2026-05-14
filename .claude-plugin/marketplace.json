@@ -133,6 +133,15 @@
       "metadata": { "chains_to": [] }
     },
     {
+      "name": "cve-today",
+      "source": "./plugins/cve-today",
+      "version": "1.0.0",
+      "description": "Daily-refreshed NVD CVE feed (last 24h, CVSS >= 7.0) matched against your repo's stack",
+      "category": "security",
+      "tags": ["command", "hook", "script"],
+      "metadata": { "chains_to": ["secure-code-review"] }
+    },
+    {
       "name": "devsecops",
       "source": "./plugins/devsecops",
       "version": "1.0.0",
