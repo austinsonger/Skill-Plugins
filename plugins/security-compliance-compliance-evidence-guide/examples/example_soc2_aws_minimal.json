@@ -1,0 +1,98 @@
+{
+  "framework": {
+    "name": "SOC 2 (AICPA 2017 TSC, revised PoF 2022)",
+    "short_name": "SOC2",
+    "scope": "Trust Services Criteria: Security, Availability",
+    "id_label": "Criterion ID",
+    "authoritative_source": "AICPA TSP Section 100"
+  },
+  "csp": {
+    "name": "Amazon Web Services (AWS)",
+    "short_name": "AWS",
+    "shared_resp": "AWS is responsible for the security OF the cloud (physical data centers, hardware, hypervisor, networking infrastructure, managed-service backplane). The customer is responsible for security IN the cloud (identity, encryption configuration, logging, network controls, application code, data classification, and governance).",
+    "attestation_repo": {"name": "AWS Artifact", "url": "https://aws.amazon.com/artifact"},
+    "console_term": "Console Path / CLI",
+    "foundational_services": [
+      {"name": "AWS CloudTrail", "blurb": "API audit log. Enable an organization trail with log file validation and KMS-encrypted destination."},
+      {"name": "AWS Config", "blurb": "Configuration state and history with Conformance Packs."},
+      {"name": "AWS IAM + IAM Identity Center", "blurb": "Identity, RBAC, MFA, federation."},
+      {"name": "AWS KMS", "blurb": "Customer-managed keys with rotation enabled."},
+      {"name": "AWS Security Hub", "blurb": "Findings aggregation with framework-specific standards."},
+      {"name": "AWS Artifact", "blurb": "Inherited evidence — AWS SOC 2 Type II report."}
+    ]
+  },
+  "deliverable_name_stem": "SOC2_AWS_MINIMAL",
+  "version": "1.0",
+  "date": "May 2026",
+  "purpose_paragraph": "This minimal example demonstrates the build_evidence_package.py builder by mapping a small subset of SOC 2 criteria to AWS-native evidence sources. Intended for sanity-testing the skill, not for production use.",
+  "evidence_sourcing_principles": [
+    {"name": "Authoritative source.", "body": "Pull evidence from the AWS service that owns the control. Avoid screenshots when an export or API call returns the same data."},
+    {"name": "Timestamped and immutable.", "body": "Send CloudTrail and Config to S3 buckets with Object Lock or versioning + MFA Delete."},
+    {"name": "Frequency-aligned.", "body": "Type 2 evaluates operating effectiveness across the audit period — use continuous detective controls."}
+  ],
+  "categories": [
+    {
+      "name": "Common Criteria (CC)",
+      "rows": [
+        {
+          "id": "CC6.1",
+          "name": "Logical access security software and architecture",
+          "description": "The entity implements logical access security software, infrastructure, and architectures over protected information assets to protect them from security events to meet the entity's objectives.",
+          "services": "AWS IAM; IAM Identity Center; AWS Organizations SCPs/RCPs; AWS KMS; AWS Secrets Manager; Amazon VPC",
+          "evidence": "Asset inventory from Systems Manager and Config; IAM policy JSON for production roles; SCP/RCP JSON; KMS key policies and rotation status.",
+          "path": "IAM -> Account settings; KMS -> Customer managed keys",
+          "frequency": "Annual review + continuous",
+          "owner": "Security / Platform"
+        },
+        {
+          "id": "CC6.7",
+          "name": "Restrict transmission, movement, and removal of information",
+          "description": "The entity restricts the transmission, movement, and removal of information to authorized users and processes, and protects it during transmission, movement, or removal.",
+          "services": "AWS Certificate Manager; AWS PrivateLink; Amazon VPC endpoints; AWS KMS",
+          "evidence": "ACM certificate inventory; ALB/CloudFront TLS policy (TLS 1.2+); VPC endpoint inventory; KMS-encrypted S3 buckets list.",
+          "path": "ACM -> Certificates; ELB -> Listeners (Security policy)",
+          "frequency": "Continuous",
+          "owner": "Platform / Security"
+        }
+      ]
+    },
+    {
+      "name": "Availability (A)",
+      "rows": [
+        {
+          "id": "A1.2",
+          "name": "Environmental protections, backup, recovery infrastructure",
+          "description": "The entity authorizes, designs, develops, acquires, implements, operates, approves, maintains, and monitors environmental protections, software, data backup processes, and recovery infrastructure to meet its objectives.",
+          "services": "AWS Backup; Multi-AZ; Multi-Region; Amazon S3 Cross-Region Replication",
+          "evidence": "AWS Backup plan with cross-region copy enabled; Multi-AZ deployment evidence; S3 CRR configuration; RTO/RPO documentation.",
+          "path": "Backup -> Backup plans; S3 -> Bucket -> Management -> Replication",
+          "frequency": "Continuous",
+          "owner": "SRE"
+        }
+      ]
+    }
+  ],
+  "inherited": [
+    {
+      "id": "CC6.4",
+      "why": "Physical access to AWS data centers is operated and controlled by AWS.",
+      "evidence": "AWS SOC 2 Type II report (AWS Artifact -> Reports). Customer evidences physical controls for non-AWS components only."
+    },
+    {
+      "id": "CC9.2",
+      "why": "Subservice organization (AWS) commitments and assessments.",
+      "evidence": "Active subscription to AWS SOC 2 Type II report; carve-out or inclusive method documented."
+    }
+  ],
+  "evidence_retention_bullets": [
+    "Retain CloudTrail logs for the audit period plus one year, in an S3 bucket with Object Lock and KMS-CMK encryption.",
+    "Capture IAM credential reports quarterly.",
+    "Export Security Hub findings monthly.",
+    "Run AWS Backup restore tests quarterly."
+  ],
+  "references": [
+    "AICPA TSP Section 100 (2017 TSC with revised Points of Focus, 2022)",
+    "AWS Artifact — https://aws.amazon.com/artifact",
+    "AWS Shared Responsibility Model — https://aws.amazon.com/compliance/shared-responsibility-model"
+  ]
+}
