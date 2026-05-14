@@ -1,0 +1,16 @@
+{
+  "name": "evidence-freshness-watchdog",
+  "version": "1.0.0",
+  "description": "Daily SessionStart watchdog that flags compliance evidence artifacts (SOC 2 logs >90d, ISO docs >12mo) as stale based on sidecar metadata.",
+  "author": { "name": "Austin Songer" },
+  "homepage": "https://github.com/austinsonger/ClaudeAdvancedPlugins",
+  "repository": "https://github.com/austinsonger/ClaudeAdvancedPlugins",
+  "license": "MIT",
+  "category": "compliance",
+  "commands": "./commands",
+  "hooks": "./hooks/hooks.json",
+  "metadata": {
+    "badges": ["command", "hook", "script"],
+    "chains_to": ["security-compliance-compliance-evidence-gen"]
+  }
+}

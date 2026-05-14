@@ -520,6 +520,15 @@
       "metadata": { "chains_to": ["security-compliance-control-testing-worksheet"] }
     },
     {
+      "name": "security-compliance-audit-prep",
+      "source": "./plugins/security-compliance-audit-prep",
+      "version": "1.0.0",
+      "description": "Auditor Q&A simulator — rehearse walkthroughs with a simulated auditor and turn the transcript into prep material",
+      "category": "compliance",
+      "tags": ["command", "simulator", "rehearsal"],
+      "metadata": { "chains_to": ["security-compliance-soc2-internal-audit", "security-compliance-control-narrative-writer"] }
+    },
+    {
       "name": "security-compliance-vendor-risk-assessment",
       "source": "./plugins/security-compliance-vendor-risk-assessment",
       "version": "1.0.0",
