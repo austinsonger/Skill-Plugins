@@ -18,6 +18,10 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PLUGINS_DIR="$SCRIPT_DIR/plugins"
 CLAUDE_COMMANDS_DIR="$HOME/.claude/commands"
+AGENTS_SKILLS_DIR="$HOME/.agents/skills"
+
+# Install target: "claude" (default), "agents", or "both"
+TARGET="claude"
 
 # Colors
 RED='\033[0;31m'
@@ -41,11 +45,12 @@ get_category_plugins() {
         gamedev)      echo "gamedev-unity gamedev-unreal gamedev-threejs gamedev-godot gamedev-design" ;;
         productivity) echo "memory-vault context-manager context-keeper hallucination-guard token-tracker" ;;
         systems)      echo "os-internals cloud-security" ;;
+        compliance)   echo "security-compliance-scrms security-compliance-scrms-pdca security-compliance-soc2-internal-audit security-compliance-iso27001-audit-findings security-compliance-vendor-risk-assessment security-compliance-control-narrative-writer security-compliance-control-statement-enhancer security-compliance-control-testing-worksheet security-compliance-inheritance-matrix-builder security-compliance-compliance-evidence-gen security-compliance-compliance-evidence-guide" ;;
         *)            echo "" ;;
     esac
 }
 
-ALL_CATEGORIES="backend frontend gamedev security blueteam reverse productivity systems"
+ALL_CATEGORIES="backend frontend gamedev security blueteam reverse productivity systems compliance"
 
 show_banner() {
     echo -e "${CYAN}${BOLD}"
@@ -73,6 +78,12 @@ show_help() {
     echo -e "  ${CYAN}--uninstall, -u${NC}         Remove all installed commands"
     echo -e "  ${CYAN}--status, -s${NC}            Show installed vs available plugins"
     echo -e "  ${CYAN}--update${NC}                Update all installed plugins"
+    echo -e "  ${CYAN}--target, -t TARGET${NC}     Install target: claude | agents | both (default: claude)"
+    echo ""
+    echo -e "${BOLD}TARGETS${NC}"
+    echo -e "  ${MAGENTA}claude${NC}   ~/.claude/commands/         (Claude Code slash commands)"
+    echo -e "  ${MAGENTA}agents${NC}   ~/.agents/skills/<name>/    (Agent Skills format — SKILL.md w/ frontmatter)"
+    echo -e "  ${MAGENTA}both${NC}     install to both locations"
     echo ""
     echo -e "${BOLD}CATEGORIES${NC}"
     echo -e "  ${MAGENTA}backend${NC}       Backend architecture, API design, database optimization"
@@ -83,6 +94,7 @@ show_help() {
     echo -e "  ${MAGENTA}reverse${NC}       Binary RE, malware RE, protocol RE, firmware, deobfuscation"
     echo -e "  ${MAGENTA}productivity${NC}  Memory, context management, hallucination guard"
     echo -e "  ${MAGENTA}systems${NC}       OS internals, cloud security"
+    echo -e "  ${MAGENTA}compliance${NC}    SCRMS, SOC 2, ISO 27001, vendor risk, control narratives, audits"
     echo ""
     echo -e "${BOLD}EXAMPLES${NC}"
     echo "  ./install.sh                                  # Install everything"
@@ -106,35 +118,296 @@ show_help() {
     echo ""
 }
 
-install_plugin() {
-    local plugin_name="$1"
-    local plugin_dir="$PLUGINS_DIR/$plugin_name/commands"
+# Extract a short description from a command markdown file.
+# Strategy: first non-heading, non-empty paragraph line after the H1.
+# Falls back to the H1 itself (with " Plugin" stripped).
+extract_description() {
+    local src="$1"
+    local desc
+    desc=$(awk '
+        /^# / && !seen { seen=1; next }
+        seen && NF && !/^#/ { print; exit }
+    ' "$src")
+    if [ -z "$desc" ]; then
+        desc=$(head -n 1 "$src" | sed 's/^#* *//' | sed 's/ Plugin$//')
+    fi
+    # Truncate to ~200 chars and escape double quotes for YAML
+    echo "$desc" | cut -c1-200 | sed 's/"/\\"/g'
+}
 
-    if [ ! -d "$plugin_dir" ]; then
-        echo -e "${RED}  [-] Plugin not found: $plugin_name${NC}"
+# Install one .md as an Agent Skill: ~/.agents/skills/<skill-name>/SKILL.md
+# with YAML frontmatter (name, description) prepended.
+install_as_agent_skill() {
+    local src="$1"
+    local skill_name
+    skill_name=$(basename "$src" .md)
+    local skill_dir="$AGENTS_SKILLS_DIR/$skill_name"
+    local dest="$skill_dir/SKILL.md"
+
+    if [ -f "$dest" ] && [ "$FORCE" != "true" ]; then
+        SKIPPED=$((SKIPPED + 1))
         return 1
     fi
 
+    mkdir -p "$skill_dir"
+    local description
+    description=$(extract_description "$src")
+
+    {
+        echo "---"
+        echo "name: $skill_name"
+        echo "description: \"$description\""
+        echo "---"
+        echo ""
+        cat "$src"
+    } > "$dest"
+    return 0
+}
+
+# Detect plugin layout. Echos "skill" if plugins/<name>/SKILL.md exists,
+# "legacy" if plugins/<name>/commands/*.md exists, "none" otherwise.
+detect_layout() {
+    local plugin_name="$1"
+    if [ -f "$PLUGINS_DIR/$plugin_name/SKILL.md" ]; then
+        echo "skill"
+    elif [ -d "$PLUGINS_DIR/$plugin_name/commands" ]; then
+        echo "legacy"
+    else
+        echo "none"
+    fi
+}
+
+# Strip YAML frontmatter from a file and echo body to stdout.
+strip_frontmatter() {
+    awk 'BEGIN{fm=0} NR==1 && /^---[[:space:]]*$/ {fm=1; next} fm==1 && /^---[[:space:]]*$/ {fm=2; next} fm!=1 {print}' "$1"
+}
+
+# Map a file extension to a fenced-code-block language hint.
+fence_lang_for() {
+    case "$1" in
+        *.py) echo "python" ;;
+        *.sh|*.bash) echo "bash" ;;
+        *.js) echo "javascript" ;;
+        *.ts) echo "typescript" ;;
+        *.rb) echo "ruby" ;;
+        *.go) echo "go" ;;
+        *.rs) echo "rust" ;;
+        *.json) echo "json" ;;
+        *.yaml|*.yml) echo "yaml" ;;
+        *.toml) echo "toml" ;;
+        *.sql) echo "sql" ;;
+        *.md) echo "" ;;
+        *) echo "" ;;
+    esac
+}
+
+# Build a single inlined slash-command file for a skill-rooted plugin.
+# Concatenates SKILL.md body + references/ + examples/ + scripts/ so that
+# claude-target installs retain supporting content.
+build_inlined_skill() {
+    local plugin_dir="$1"
+    local dest="$2"
+
+    {
+        strip_frontmatter "$plugin_dir/SKILL.md"
+
+        # References (markdown — inline directly)
+        if [ -d "$plugin_dir/references" ]; then
+            local first=1
+            for ref in "$plugin_dir/references"/*; do
+                [ -f "$ref" ] || continue
+                if [ $first -eq 1 ]; then
+                    echo ""
+                    echo "---"
+                    echo ""
+                    echo "## References"
+                    first=0
+                fi
+                echo ""
+                echo "### $(basename "$ref")"
+                echo ""
+                local lang
+                lang=$(fence_lang_for "$ref")
+                if [ -z "$lang" ]; then
+                    cat "$ref"
+                else
+                    echo "\`\`\`$lang"
+                    cat "$ref"
+                    echo "\`\`\`"
+                fi
+            done
+        fi
+
+        # Examples
+        if [ -d "$plugin_dir/examples" ]; then
+            local first=1
+            for ex in "$plugin_dir/examples"/*; do
+                [ -f "$ex" ] || continue
+                if [ $first -eq 1 ]; then
+                    echo ""
+                    echo "---"
+                    echo ""
+                    echo "## Examples"
+                    first=0
+                fi
+                echo ""
+                echo "### $(basename "$ex")"
+                echo ""
+                local lang
+                lang=$(fence_lang_for "$ex")
+                if [ -z "$lang" ]; then
+                    cat "$ex"
+                else
+                    echo "\`\`\`$lang"
+                    cat "$ex"
+                    echo "\`\`\`"
+                fi
+            done
+        fi
+
+        # Scripts (always fenced)
+        if [ -d "$plugin_dir/scripts" ]; then
+            local first=1
+            for s in "$plugin_dir/scripts"/*; do
+                [ -f "$s" ] || continue
+                if [ $first -eq 1 ]; then
+                    echo ""
+                    echo "---"
+                    echo ""
+                    echo "## Scripts"
+                    first=0
+                fi
+                echo ""
+                echo "### $(basename "$s")"
+                echo ""
+                local lang
+                lang=$(fence_lang_for "$s")
+                [ -z "$lang" ] && lang="text"
+                echo "\`\`\`$lang"
+                cat "$s"
+                echo "\`\`\`"
+            done
+        fi
+
+        # Assets — list only (may include large/binary files). Note the path
+        # so a user can find them on disk inside the cloned repo.
+        if [ -d "$plugin_dir/assets" ]; then
+            local first=1
+            for a in "$plugin_dir/assets"/*; do
+                [ -f "$a" ] || continue
+                if [ $first -eq 1 ]; then
+                    echo ""
+                    echo "---"
+                    echo ""
+                    echo "## Assets"
+                    echo ""
+                    echo "Bundled assets (use the agents-target install to get the actual files):"
+                    echo ""
+                    first=0
+                fi
+                local size
+                size=$(wc -c < "$a" | tr -d ' ')
+                echo "- \`$(basename "$a")\` (${size} bytes)"
+            done
+        fi
+    } > "$dest"
+}
+
+# Install a Skill-rooted plugin. Returns 0 if anything was installed.
+install_skill_plugin() {
+    local plugin_name="$1"
+    local plugin_dir="$PLUGINS_DIR/$plugin_name"
+    local did_install=0
+    TOTAL=$((TOTAL + 1))
+
+    # claude target: inline SKILL + resources into one slash command, plus any commands/*.md
+    if [ "$TARGET" = "claude" ] || [ "$TARGET" = "both" ]; then
+        local main_dest="$CLAUDE_COMMANDS_DIR/${plugin_name}.md"
+        if [ -f "$main_dest" ] && [ "$FORCE" != "true" ]; then
+            SKIPPED=$((SKIPPED + 1))
+        else
+            build_inlined_skill "$plugin_dir" "$main_dest"
+            did_install=1
+        fi
+
+        if [ -d "$plugin_dir/commands" ]; then
+            for cmd_file in "$plugin_dir/commands"/*.md; do
+                [ -f "$cmd_file" ] || continue
+                local fname=$(basename "$cmd_file")
+                if [ -f "$CLAUDE_COMMANDS_DIR/$fname" ] && [ "$FORCE" != "true" ]; then
+                    SKIPPED=$((SKIPPED + 1))
+                else
+                    cp "$cmd_file" "$CLAUDE_COMMANDS_DIR/$fname"
+                    did_install=1
+                fi
+            done
+        fi
+    fi
+
+    # agents target: copy the entire plugin directory to ~/.agents/skills/<name>/
+    if [ "$TARGET" = "agents" ] || [ "$TARGET" = "both" ]; then
+        local skill_dest="$AGENTS_SKILLS_DIR/$plugin_name"
+        if [ -d "$skill_dest" ] && [ "$FORCE" != "true" ]; then
+            SKIPPED=$((SKIPPED + 1))
+        else
+            rm -rf "$skill_dest"
+            cp -R "$plugin_dir" "$skill_dest"
+            did_install=1
+        fi
+    fi
+
+    if [ $did_install -eq 1 ]; then
+        INSTALLED=$((INSTALLED + 1))
+        return 0
+    fi
+    return 1
+}
+
+install_plugin() {
+    local plugin_name="$1"
+    local layout
+    layout=$(detect_layout "$plugin_name")
+
+    case "$layout" in
+        skill)
+            if install_skill_plugin "$plugin_name"; then
+                echo -e "${GREEN}  [+] $plugin_name${NC} — skill"
+            fi
+            return
+            ;;
+        none)
+            echo -e "${RED}  [-] Plugin not found: $plugin_name${NC}"
+            return 1
+            ;;
+    esac
+
+    # legacy layout: plugins/<name>/commands/*.md
+    local plugin_dir="$PLUGINS_DIR/$plugin_name/commands"
     local count=0
     for cmd_file in "$plugin_dir"/*.md; do
-        if [ -f "$cmd_file" ]; then
-            local filename=$(basename "$cmd_file")
-            TOTAL=$((TOTAL + 1))
+        [ -f "$cmd_file" ] || continue
+        local filename=$(basename "$cmd_file")
+        TOTAL=$((TOTAL + 1))
+        local did_install=0
 
-            if [ -f "$CLAUDE_COMMANDS_DIR/$filename" ]; then
-                if [ "$FORCE" = "true" ]; then
-                    cp "$cmd_file" "$CLAUDE_COMMANDS_DIR/$filename"
-                    count=$((count + 1))
-                    INSTALLED=$((INSTALLED + 1))
-                else
-                    SKIPPED=$((SKIPPED + 1))
-                    continue
-                fi
+        if [ "$TARGET" = "claude" ] || [ "$TARGET" = "both" ]; then
+            if [ -f "$CLAUDE_COMMANDS_DIR/$filename" ] && [ "$FORCE" != "true" ]; then
+                SKIPPED=$((SKIPPED + 1))
             else
                 cp "$cmd_file" "$CLAUDE_COMMANDS_DIR/$filename"
-                count=$((count + 1))
-                INSTALLED=$((INSTALLED + 1))
+                did_install=1
             fi
+        fi
+
+        if [ "$TARGET" = "agents" ] || [ "$TARGET" = "both" ]; then
+            if install_as_agent_skill "$cmd_file"; then
+                did_install=1
+            fi
+        fi
+
+        if [ $did_install -eq 1 ]; then
+            count=$((count + 1))
+            INSTALLED=$((INSTALLED + 1))
         fi
     done
 
@@ -172,16 +445,34 @@ show_list() {
         local total_cmds=0
 
         for plugin in $plugins; do
-            if [ -d "$PLUGINS_DIR/$plugin/commands" ]; then
+            local layout=$(detect_layout "$plugin")
+            if [ "$layout" = "legacy" ]; then
                 local cmd_count=$(ls -1 "$PLUGINS_DIR/$plugin/commands/"*.md 2>/dev/null | wc -l | tr -d ' ')
                 total_cmds=$((total_cmds + cmd_count))
+            elif [ "$layout" = "skill" ]; then
+                total_cmds=$((total_cmds + 1))
+                if [ -d "$PLUGINS_DIR/$plugin/commands" ]; then
+                    local cmd_count=$(ls -1 "$PLUGINS_DIR/$plugin/commands/"*.md 2>/dev/null | wc -l | tr -d ' ')
+                    total_cmds=$((total_cmds + cmd_count))
+                fi
             fi
         done
 
         echo -e "${MAGENTA}${BOLD}  [$category]${NC} ${DIM}($total_cmds commands)${NC}"
         for plugin in $plugins; do
+            local layout=$(detect_layout "$plugin")
+            [ "$layout" = "none" ] && continue
+            echo -e "    ${CYAN}$plugin${NC} ${DIM}[$layout]${NC}"
+
+            if [ "$layout" = "skill" ]; then
+                if [ -f "$CLAUDE_COMMANDS_DIR/$plugin.md" ]; then
+                    echo -e "      └─ ${GREEN}/$plugin${NC} ${DIM}(installed)${NC}"
+                else
+                    echo -e "      └─ /$plugin"
+                fi
+            fi
+
             if [ -d "$PLUGINS_DIR/$plugin/commands" ]; then
-                echo -e "    ${CYAN}$plugin${NC}"
                 for cmd in "$PLUGINS_DIR/$plugin/commands/"*.md; do
                     if [ -f "$cmd" ]; then
                         local cmd_name=$(basename "$cmd" .md)
@@ -212,6 +503,15 @@ show_status() {
         local cat_total=0
 
         for plugin in $plugins; do
+            local layout=$(detect_layout "$plugin")
+            if [ "$layout" = "skill" ]; then
+                cat_total=$((cat_total + 1))
+                total_count=$((total_count + 1))
+                if [ -f "$CLAUDE_COMMANDS_DIR/$plugin.md" ]; then
+                    cat_installed=$((cat_installed + 1))
+                    installed_count=$((installed_count + 1))
+                fi
+            fi
             if [ -d "$PLUGINS_DIR/$plugin/commands" ]; then
                 for cmd in "$PLUGINS_DIR/$plugin/commands/"*.md; do
                     if [ -f "$cmd" ]; then
@@ -254,6 +554,7 @@ interactive_install() {
     echo -e "  ${CYAN}6${NC}) ${MAGENTA}reverse${NC}        — Binary, malware, protocol, firmware RE"
     echo -e "  ${CYAN}7${NC}) ${MAGENTA}productivity${NC}   — Memory, context keeper, hallucination guard"
     echo -e "  ${CYAN}8${NC}) ${MAGENTA}systems${NC}        — OS internals, cloud security"
+    echo -e "  ${CYAN}9${NC}) ${MAGENTA}compliance${NC}     — SCRMS, SOC 2, ISO 27001, vendor risk, audits"
     echo -e "  ${CYAN}A${NC}) ${GREEN}ALL${NC}            — Install everything"
     echo ""
     echo -e "  Enter choices (comma-separated, e.g. ${BOLD}3,4,5${NC} or ${BOLD}A${NC} for all):"
@@ -282,6 +583,7 @@ interactive_install() {
             6) install_category "reverse" ;;
             7) install_category "productivity" ;;
             8) install_category "systems" ;;
+            9) install_category "compliance" ;;
             *) echo -e "${RED}  [-] Invalid choice: $choice${NC}" ;;
         esac
     done
@@ -327,6 +629,17 @@ while [ $# -gt 0 ]; do
             MODE="update"
             shift
             ;;
+        --target|-t)
+            TARGET="$2"
+            case "$TARGET" in
+                claude|agents|both) ;;
+                *)
+                    echo -e "${RED}Invalid target: $TARGET (use: claude, agents, both)${NC}"
+                    exit 1
+                    ;;
+            esac
+            shift 2
+            ;;
         --help|-h)
             show_help
             exit 0
@@ -336,12 +649,33 @@ while [ $# -gt 0 ]; do
             echo -e "${YELLOW}[*] Uninstalling all Claude Advanced Plugins...${NC}"
             removed=0
             for dir in "$PLUGINS_DIR"/*/; do
+                plugin_name=$(basename "$dir")
+                # Skill-rooted: <plugin>.md slash command + plugin dir under agents
+                if [ -f "$dir/SKILL.md" ]; then
+                    if [ -f "$CLAUDE_COMMANDS_DIR/$plugin_name.md" ]; then
+                        rm "$CLAUDE_COMMANDS_DIR/$plugin_name.md"
+                        echo -e "${RED}  [-] Removed (claude): /$plugin_name${NC}"
+                        removed=$((removed + 1))
+                    fi
+                    if [ -d "$AGENTS_SKILLS_DIR/$plugin_name" ]; then
+                        rm -rf "$AGENTS_SKILLS_DIR/$plugin_name"
+                        echo -e "${RED}  [-] Removed (agents): $plugin_name${NC}"
+                        removed=$((removed + 1))
+                    fi
+                fi
+                # Subcommands (legacy plugins + skill plugins that have commands/)
                 for cmd in "$dir/commands/"*.md; do
                     if [ -f "$cmd" ]; then
                         filename=$(basename "$cmd")
+                        skill_name=$(basename "$filename" .md)
                         if [ -f "$CLAUDE_COMMANDS_DIR/$filename" ]; then
                             rm "$CLAUDE_COMMANDS_DIR/$filename"
-                            echo -e "${RED}  [-] Removed: /$(basename "$filename" .md)${NC}"
+                            echo -e "${RED}  [-] Removed (claude): /$skill_name${NC}"
+                            removed=$((removed + 1))
+                        fi
+                        if [ -d "$AGENTS_SKILLS_DIR/$skill_name" ]; then
+                            rm -rf "$AGENTS_SKILLS_DIR/$skill_name"
+                            echo -e "${RED}  [-] Removed (agents): $skill_name${NC}"
                             removed=$((removed + 1))
                         fi
                     fi
@@ -371,8 +705,13 @@ if ! command -v claude > /dev/null 2>&1; then
     echo ""
 fi
 
-# Create commands directory
-mkdir -p "$CLAUDE_COMMANDS_DIR"
+# Create target directories
+if [ "$TARGET" = "claude" ] || [ "$TARGET" = "both" ]; then
+    mkdir -p "$CLAUDE_COMMANDS_DIR"
+fi
+if [ "$TARGET" = "agents" ] || [ "$TARGET" = "both" ]; then
+    mkdir -p "$AGENTS_SKILLS_DIR"
+fi
 
 # Track installation
 INSTALLED=0

@@ -1,0 +1,95 @@
+{
+  "framework": {
+    "name": "HIPAA Security & Breach Notification Rules",
+    "short_name": "HIPAA",
+    "scope": "45 CFR Parts 160 & 164 — Administrative, Physical, Technical Safeguards; Breach Notification",
+    "id_label": "Citation",
+    "type_column": {
+      "header": "Type (R/A)",
+      "values": {
+        "R": {"label": "Required", "fill": "C00000", "text": "FFFFFF"},
+        "A": {"label": "Addressable", "fill": "FFC000", "text": "000000"}
+      }
+    },
+    "authoritative_source": "45 CFR Parts 160 & 164"
+  },
+  "csp": {
+    "name": "Microsoft Azure",
+    "short_name": "Azure",
+    "shared_resp": "Microsoft is responsible for the security OF the cloud (physical datacenters, hardware, host OS / hypervisor, networking infrastructure, managed-service backplane). The customer is responsible for security IN the cloud (identity, encryption configuration, logging, network controls, application code, data classification, and governance).",
+    "attestation_repo": {"name": "Microsoft Service Trust Portal", "url": "https://servicetrust.microsoft.com"},
+    "console_term": "Portal Path / CLI",
+    "foundational_services": [
+      {"name": "Azure Activity Log + Entra audit/sign-in logs", "blurb": "API and identity audit."},
+      {"name": "Microsoft Entra ID + PIM", "blurb": "Identity and just-in-time elevation."},
+      {"name": "Azure Key Vault", "blurb": "Customer-managed keys."},
+      {"name": "Microsoft Defender for Cloud", "blurb": "CSPM and threat detection."},
+      {"name": "Microsoft Service Trust Portal", "blurb": "Inherited evidence and BAA."}
+    ]
+  },
+  "deliverable_name_stem": "HIPAA_Azure_MINIMAL",
+  "purpose_paragraph": "Minimal test of the builder with HIPAA's R/A type column. A signed BAA with Microsoft must precede any ePHI processing.",
+  "evidence_sourcing_principles": [
+    {"name": "Six-year retention.", "body": "§164.316(b)(2)(i) requires documentation retained at least six years."},
+    {"name": "BAA prerequisite.", "body": "A signed Microsoft Products and Services DPA + BAA is precondition to ePHI processing."}
+  ],
+  "categories": [
+    {
+      "name": "Administrative Safeguards (§164.308)",
+      "rows": [
+        {
+          "id": "164.308(a)(1)(ii)(A)",
+          "name": "Risk Analysis",
+          "type": "R",
+          "description": "Conduct an accurate and thorough assessment of the potential risks and vulnerabilities to the confidentiality, integrity, and availability of ePHI.",
+          "services": "Microsoft Defender for Cloud; Microsoft Purview; Azure Policy",
+          "evidence": "Annual HIPAA Security Risk Analysis document; Defender for Cloud misconfiguration findings export.",
+          "path": "Defender for Cloud -> Recommendations",
+          "frequency": "Annual",
+          "owner": "Security / Compliance"
+        }
+      ]
+    },
+    {
+      "name": "Technical Safeguards (§164.312)",
+      "rows": [
+        {
+          "id": "164.312(a)(2)(iv)",
+          "name": "Encryption and Decryption",
+          "type": "A",
+          "description": "Implement a mechanism to encrypt and decrypt ePHI.",
+          "services": "Azure Key Vault; Azure Key Vault Managed HSM",
+          "evidence": "CMK configuration on all storage services holding ePHI; rotation period set.",
+          "path": "Storage account -> Encryption (CMK)",
+          "frequency": "Continuous",
+          "owner": "Security / Platform"
+        }
+      ]
+    }
+  ],
+  "inherited": [
+    {
+      "id": "164.310(a)(1)",
+      "why": "Physical access to Azure datacenters is operated by Microsoft.",
+      "evidence": "Microsoft Azure SOC 2 Type II report (Service Trust Portal)."
+    }
+  ],
+  "extra_xlsx_tabs": [
+    {
+      "title": "Required vs Addressable",
+      "headers": ["Type", "Definition"],
+      "rows": [
+        ["Required (R)", "Implementation is mandatory."],
+        ["Addressable (A)", "Implement, implement an alternative, or document why neither is required. NOT optional."]
+      ]
+    }
+  ],
+  "evidence_retention_bullets": [
+    "Retain HIPAA documentation 6 years per §164.316(b)(2)(i).",
+    "Use immutable Azure Storage (locked retention) for evidence archive."
+  ],
+  "references": [
+    "45 CFR Parts 160 & 164",
+    "Microsoft Service Trust Portal"
+  ]
+}

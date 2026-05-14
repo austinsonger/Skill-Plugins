@@ -25,6 +25,7 @@ chmod +x install.sh
 ./install.sh -c gamedev           # Unity, Unreal, Godot, Three.js
 ./install.sh -c frontend          # Animations, DOM, 3D, performance
 ./install.sh -c reverse           # Binary, malware, firmware, protocol RE
+./install.sh -c compliance        # SCRMS, SOC 2, ISO 27001, vendor risk, audits
 
 # Combine multiple categories
 ./install.sh -c security -c blueteam -c reverse
@@ -43,6 +44,33 @@ chmod +x install.sh
 ./install.sh -p pentest-ad        # Install one specific plugin
 ./install.sh --help               # Full usage guide
 ```
+
+### Install Target (Claude Code vs other AI tools)
+
+By default, plugins install as Claude Code slash commands. The installer also supports the **Agent Skills** format used by other AI tools (skills are placed in `~/.agents/skills/<name>/SKILL.md` with YAML frontmatter).
+
+```bash
+./install.sh                          # default: target=claude  → ~/.claude/commands/
+./install.sh --target agents          # target=agents          → ~/.agents/skills/<name>/SKILL.md
+./install.sh --target both            # install to both locations
+./install.sh -t agents -c security    # combine with category/plugin flags
+```
+
+`uninstall.sh` removes from both targets by default, or pass `--target claude` / `--target agents` to scope it.
+
+### Plugin Layouts
+
+The installer handles two plugin layouts in `plugins/`:
+
+- **Legacy**: `plugins/<name>/commands/<cmd>.md` — one or more bare slash-command markdown files. Used by all of the original ~49 plugins.
+- **Skill-rooted**: `plugins/<name>/SKILL.md` with YAML frontmatter, plus optional `commands/`, `references/`, `examples/`, `scripts/`, and `assets/` subdirectories. Used by the `compliance` category.
+
+**Install behavior per layout:**
+
+| Target | Legacy | Skill-rooted |
+|---|---|---|
+| `claude` | each `commands/*.md` → `~/.claude/commands/` | `SKILL.md` body + `references/` + `examples/` + `scripts/` are inlined into a single `~/.claude/commands/<plugin-name>.md`, plus any `commands/*.md` installed individually. Binary `assets/` are listed by name only — get the real files via the `agents` target. |
+| `agents` | each `commands/*.md` wrapped with frontmatter → `~/.agents/skills/<cmd>/SKILL.md` | entire plugin directory copied to `~/.agents/skills/<plugin-name>/` preserving full structure |
 
 ### How Plugins Work in Claude Code
 
