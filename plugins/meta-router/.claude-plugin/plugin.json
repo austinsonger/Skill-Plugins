@@ -1,0 +1,17 @@
+{
+  "name": "meta-router",
+  "version": "1.0.0",
+  "description": "@router sub-agent to pick the right specialist + /skills dashboard for installed plugins, chains, hooks, and recent usage",
+  "author": { "name": "Austin Songer" },
+  "homepage": "https://github.com/austinsonger/ClaudeAdvancedPlugins",
+  "repository": "https://github.com/austinsonger/ClaudeAdvancedPlugins",
+  "license": "MIT",
+  "category": "meta",
+  "commands": "./commands",
+  "agents": "./agents",
+  "hooks": "./hooks/hooks.json",
+  "metadata": {
+    "badges": ["agent", "command", "hook"],
+    "chains_to": []
+  }
+}

@@ -268,6 +268,15 @@
       "metadata": { "chains_to": [] }
     },
     {
+      "name": "meta-router",
+      "source": "./plugins/meta-router",
+      "version": "1.0.0",
+      "description": "@router sub-agent to pick the right specialist + /skills dashboard for installed plugins, chains, hooks, and recent usage",
+      "category": "meta",
+      "tags": ["command", "agent", "hook", "script"],
+      "metadata": { "chains_to": [] }
+    },
+    {
       "name": "os-internals",
       "source": "./plugins/os-internals",
       "version": "1.0.0",
