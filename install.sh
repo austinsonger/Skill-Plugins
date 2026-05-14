@@ -2,7 +2,7 @@
 # ============================================================================
 # Skills Plugins Installer v2.0
 # Installs Claude Code custom slash commands for advanced development,
-# security, game dev, and productivity workflows.
+# security and compliance, game dev, and productivity workflows.
 #
 # Compatible with Bash 3.2+ (macOS default) and Linux.
 #
