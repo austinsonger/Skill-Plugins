@@ -524,8 +524,12 @@ install_plugin() {
     if [ $count -gt 0 ]; then
         local version_label="${repo_ver:+ v$repo_ver}"
         echo -e "${GREEN}  [+] $plugin_name${NC} — $count command(s)$version_label"
-        record_install "$plugin_name" "$repo_ver" "claude"
-        [ "$TARGET" = "both" ] || [ "$TARGET" = "agents" ] && record_install "$plugin_name" "$repo_ver" "agents"
+        if [ "$TARGET" = "claude" ] || [ "$TARGET" = "both" ]; then
+            record_install "$plugin_name" "$repo_ver" "claude"
+        fi
+        if [ "$TARGET" = "agents" ] || [ "$TARGET" = "both" ]; then
+            record_install "$plugin_name" "$repo_ver" "agents"
+        fi
     fi
 }
 

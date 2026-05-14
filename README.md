@@ -145,28 +145,28 @@ The installer handles two plugin layouts in `plugins/`:
 | `/crypto-analysis` | 🧠 cmd | Cryptographic auditing, RSA/ECC attacks, TLS analysis, key management |  |
 | `/devsecops` | 🧠 cmd | CI/CD security, SAST/DAST/SCA integration, security pipeline design |  |
 | `/exploit-dev` | 🧠 cmd | Binary exploitation, ROP chains, heap techniques, CTF solving |  |
-| `/pentest-ad` | 🧠 cmd | Active Directory attacks, Kerberos, ADCS, BloodHound, delegation abuse |  |
-| `/pentest-cloud` | 🧠 cmd | AWS/Azure/GCP security testing, IAM exploitation, privilege escalation |  |
-| `/pentest-mobile` | 🧠 cmd | Android/iOS app testing, Frida, OWASP MASTG/MASVS |  |
-| `/pentest-network` | 🧠 cmd | Network infrastructure testing, service enumeration, network exploitation |  |
-| `/pentest-report` | 🧠 cmd | Professional pentest report writing, CVSS scoring, executive summaries |  |
-| `/pentest-social` | 🧠 cmd | Social engineering campaigns, phishing, vishing, OSINT, physical SE |  |
+| `/pentest-ad` | 🧠 cmd · 🤖 agent · 🛠 script | Active Directory attacks, Kerberos, ADCS, BloodHound, delegation abuse | /pentest-report |
+| `/pentest-cloud` | 🧠 cmd | AWS/Azure/GCP security testing, IAM exploitation, privilege escalation | /pentest-report |
+| `/pentest-mobile` | 🧠 cmd | Android/iOS app testing, Frida, OWASP MASTG/MASVS | /pentest-report |
+| `/pentest-network` | 🧠 cmd · 🤖 agent · 🛠 script | Network infrastructure testing, service enumeration, network exploitation | /pentest-ad → /pentest-report |
+| `/pentest-report` | 🧠 cmd · 🤖 agent | Professional pentest report writing, CVSS scoring, executive summaries |  |
+| `/pentest-social` | 🧠 cmd | Social engineering campaigns, phishing, vishing, OSINT, physical SE | /pentest-report |
 | `/pentest-toolkit` | 🧠 cmd | PTES methodology, OWASP Top 10, web/API vulnerability assessment |  |
-| `/pentest-wireless` | 🧠 cmd | Wi-Fi, Bluetooth, BLE, IoT radio, SDR security testing |  |
-| `/red-team-ops` | 🧠 cmd | Adversary simulation, attack chains, MITRE ATT&CK, C2 infrastructure |  |
-| `/secure-code-review` | 🧠 cmd | SAST-style code review, CWE mapping, vulnerability patterns |  |
+| `/pentest-wireless` | 🧠 cmd | Wi-Fi, Bluetooth, BLE, IoT radio, SDR security testing | /pentest-report |
+| `/red-team-ops` | 🧠 cmd · 🤖 agent | Adversary simulation, attack chains, MITRE ATT&CK, C2 infrastructure | /pentest-report |
+| `/secure-code-review` | 🧠 cmd · 🤖 agent · 🪝 hook · 🛠 script | SAST-style code review, CWE mapping, vulnerability patterns |  |
 | `/supply-chain-sec` | 🧠 cmd | Dependency attacks, SBOM, SLSA framework, build pipeline security |  |
-| `/threat-modeler` | 🧠 cmd | STRIDE, DREAD, PASTA, attack trees, risk matrices |  |
+| `/threat-modeler` | 🧠 cmd · 🤖 agent · 🪝 hook · 🛠 script | STRIDE, DREAD, PASTA, attack trees, risk matrices | /secure-code-review |
 | `/vuln-research` | 🧠 cmd | Vulnerability discovery, fuzzing, CodeQL, responsible disclosure |  |
 
 ### Blue Team · Defense
 
 | Plugin | Capabilities | Description | Chains To |
 |---|---|---|---|
-| `/blue-team-dfir` | 🧠 cmd | Digital forensics, incident response, evidence handling, NIST SP 800-61 |  |
+| `/blue-team-dfir` | 🧠 cmd | Digital forensics, incident response, evidence handling, NIST SP 800-61 | /blue-team-malware-analysis |
 | `/blue-team-edr` | 🧠 cmd | EDR/XDR analysis, Sysmon configuration, endpoint threat hunting |  |
 | `/blue-team-hardening` | 🧠 cmd | CIS Benchmarks, STIGs, Windows/Linux/container/cloud hardening |  |
-| `/blue-team-malware-analysis` | 🧠 cmd | Static/dynamic malware analysis, YARA rules, behavioral analysis |  |
+| `/blue-team-malware-analysis` | 🧠 cmd · 🤖 agent | Static/dynamic malware analysis, YARA rules, behavioral analysis | /blue-team-threat-intel |
 | `/blue-team-network-defense` | 🧠 cmd | IDS/IPS, firewall management, network monitoring, Suricata/Zeek rules |  |
 | `/blue-team-siem` | 🧠 cmd | Sigma rules, Splunk SPL, Elastic KQL/EQL, Sentinel KQL, detection engineering |  |
 | `/blue-team-soc` | 🧠 cmd | SOC operations, alert triage, Tier 1-3 analysis, incident investigation |  |
@@ -176,8 +176,8 @@ The installer handles two plugin layouts in `plugins/`:
 
 | Plugin | Capabilities | Description | Chains To |
 |---|---|---|---|
-| `/reverse-binary` | 🧠 cmd | PE/ELF/Mach-O analysis, disassembly, decompilation, Ghidra/IDA |  |
-| `/reverse-firmware` | 🧠 cmd | Firmware extraction, embedded systems, UART/JTAG, emulation |  |
+| `/reverse-binary` | 🧠 cmd · 🤖 agent | PE/ELF/Mach-O analysis, disassembly, decompilation, Ghidra/IDA | /reverse-obfuscation |
+| `/reverse-firmware` | 🧠 cmd | Firmware extraction, embedded systems, UART/JTAG, emulation | /reverse-binary |
 | `/reverse-malware` | 🧠 cmd | Malware reverse engineering, unpacking, C2 protocol analysis, config extraction |  |
 | `/reverse-obfuscation` | 🧠 cmd | Deobfuscation, anti-debug bypass, anti-VM bypass, unpacking |  |
 | `/reverse-protocol` | 🧠 cmd | Network protocol RE, binary format analysis, Wireshark dissectors |  |
@@ -186,11 +186,11 @@ The installer handles two plugin layouts in `plugins/`:
 
 | Plugin | Capabilities | Description | Chains To |
 |---|---|---|---|
-| `/context-keeper` | 🧠 cmd | Maintains project context across sessions, auto-saves decisions and conventions |  |
+| `/context-keeper` | 🧠 cmd · 🪝 hook · 🛠 script | Maintains project context across sessions, auto-saves decisions and conventions |  |
 | `/context-manager` | 🧠 cmd | Context window optimization, smart file loading |  |
-| `/hallucination-guard` | 🧠 cmd | Accuracy verification, confidence signaling, source validation |  |
-| `/memory-vault` | 🧠 cmd | Persistent cross-session knowledge management |  |
-| `/token-tracker` | 🧠 cmd | Token usage tracking, cost estimation, and optimization tips per task |  |
+| `/hallucination-guard` | 🧠 cmd · 🪝 hook · 🛠 script | Accuracy verification, confidence signaling, source validation |  |
+| `/memory-vault` | 🧠 cmd · 🪝 hook · 🛠 script | Persistent cross-session knowledge management |  |
+| `/token-tracker` | 🧠 cmd · 🪝 hook · 🛠 script | Token usage tracking, cost estimation, and optimization tips per task |  |
 
 ### Systems · Cloud
 
@@ -203,16 +203,16 @@ The installer handles two plugin layouts in `plugins/`:
 
 | Plugin | Capabilities | Description | Chains To |
 |---|---|---|---|
-| `/security-compliance-compliance-evidence-gen` | · 📖 skill | Generates specific, auditor-ready evidence artifacts |  |
+| `/security-compliance-compliance-evidence-gen` | · 🛠 script · 📖 skill | Generates specific, auditor-ready evidence artifacts |  |
 | `/security-compliance-compliance-evidence-guide` | · 🛠 script · 📖 skill | Generates auditor-ready compliance evidence collection guides |  |
-| `/security-compliance-control-narrative-writer` | · 📖 skill | Auditor-ready control implementation narrative generator |  |
+| `/security-compliance-control-narrative-writer` | · 📖 skill | Auditor-ready control implementation narrative generator | /security-compliance-control-testing-worksheet |
 | `/security-compliance-control-statement-enhancer` | · 📖 skill | Transforms basic security control statements into defensible auditor-ready text |  |
-| `/security-compliance-control-testing-worksheet` | · 📖 skill | Control testing worksheet generator |  |
+| `/security-compliance-control-testing-worksheet` | · 📖 skill | Control testing worksheet generator | /security-compliance-compliance-evidence-gen |
 | `/security-compliance-inheritance-matrix-builder` | · 📖 skill | Build control inheritance matrices across CSP / customer boundaries |  |
-| `/security-compliance-iso27001-audit-findings` | · 📖 skill | ISO/IEC 27001:2022 internal audit findings assistant |  |
+| `/security-compliance-iso27001-audit-findings` | · 📖 skill | ISO/IEC 27001:2022 internal audit findings assistant | /security-compliance-control-testing-worksheet |
 | `/security-compliance-scrms-pdca` | · 🛠 script · 📖 skill | SCRMS Plan-Do-Check-Act cycle implementation guidance |  |
-| `/security-compliance-scrms` | 🧠 cmd · 📖 skill | SCF Security, Compliance & Resilience Management System (SCRMS) framework guidance |  |
-| `/security-compliance-soc2-internal-audit` | · 📖 skill | SOC 2 Type II internal audit assistant |  |
+| `/security-compliance-scrms` | 🧠 cmd · 📖 skill | SCF Security, Compliance & Resilience Management System (SCRMS) framework guidance | /security-compliance-control-narrative-writer |
+| `/security-compliance-soc2-internal-audit` | · 📖 skill | SOC 2 Type II internal audit assistant | /security-compliance-control-testing-worksheet |
 | `/security-compliance-vendor-risk-assessment` | · 📖 skill | Third-party vendor risk assessment workflow |  |
 
 <!-- END-PLUGIN-TABLE -->

@@ -31,7 +31,7 @@
       "description": "Digital forensics, incident response, evidence handling, NIST SP 800-61",
       "category": "blueteam",
       "tags": ["command"],
-      "metadata": { "chains_to": [] }
+      "metadata": { "chains_to": ["blue-team-malware-analysis"] }
     },
     {
       "name": "blue-team-edr",
@@ -57,8 +57,8 @@
       "version": "1.0.0",
       "description": "Static/dynamic malware analysis, YARA rules, behavioral analysis",
       "category": "blueteam",
-      "tags": ["command"],
-      "metadata": { "chains_to": [] }
+      "tags": ["command", "agent"],
+      "metadata": { "chains_to": ["blue-team-threat-intel"] }
     },
     {
       "name": "blue-team-network-defense",
@@ -111,7 +111,7 @@
       "version": "1.0.0",
       "description": "Maintains project context across sessions, auto-saves decisions and conventions",
       "category": "productivity",
-      "tags": ["command"],
+      "tags": ["command", "hook", "script"],
       "metadata": { "chains_to": [] }
     },
     {
@@ -255,7 +255,7 @@
       "version": "1.0.0",
       "description": "Accuracy verification, confidence signaling, source validation",
       "category": "productivity",
-      "tags": ["command"],
+      "tags": ["command", "hook", "script"],
       "metadata": { "chains_to": [] }
     },
     {
@@ -264,7 +264,7 @@
       "version": "1.0.0",
       "description": "Persistent cross-session knowledge management",
       "category": "productivity",
-      "tags": ["command"],
+      "tags": ["command", "hook", "script"],
       "metadata": { "chains_to": [] }
     },
     {
@@ -282,8 +282,8 @@
       "version": "1.0.0",
       "description": "Active Directory attacks, Kerberos, ADCS, BloodHound, delegation abuse",
       "category": "security",
-      "tags": ["command"],
-      "metadata": { "chains_to": [] }
+      "tags": ["command", "agent", "script"],
+      "metadata": { "chains_to": ["pentest-report"] }
     },
     {
       "name": "pentest-cloud",
@@ -292,7 +292,7 @@
       "description": "AWS/Azure/GCP security testing, IAM exploitation, privilege escalation",
       "category": "security",
       "tags": ["command"],
-      "metadata": { "chains_to": [] }
+      "metadata": { "chains_to": ["pentest-report"] }
     },
     {
       "name": "pentest-mobile",
@@ -301,7 +301,7 @@
       "description": "Android/iOS app testing, Frida, OWASP MASTG/MASVS",
       "category": "security",
       "tags": ["command"],
-      "metadata": { "chains_to": [] }
+      "metadata": { "chains_to": ["pentest-report"] }
     },
     {
       "name": "pentest-network",
@@ -309,8 +309,8 @@
       "version": "1.0.0",
       "description": "Network infrastructure testing, service enumeration, network exploitation",
       "category": "security",
-      "tags": ["command"],
-      "metadata": { "chains_to": [] }
+      "tags": ["command", "agent", "script"],
+      "metadata": { "chains_to": ["pentest-ad","pentest-report"] }
     },
     {
       "name": "pentest-report",
@@ -318,7 +318,7 @@
       "version": "1.0.0",
       "description": "Professional pentest report writing, CVSS scoring, executive summaries",
       "category": "security",
-      "tags": ["command"],
+      "tags": ["command", "agent"],
       "metadata": { "chains_to": [] }
     },
     {
@@ -328,7 +328,7 @@
       "description": "Social engineering campaigns, phishing, vishing, OSINT, physical SE",
       "category": "security",
       "tags": ["command"],
-      "metadata": { "chains_to": [] }
+      "metadata": { "chains_to": ["pentest-report"] }
     },
     {
       "name": "pentest-toolkit",
@@ -346,7 +346,7 @@
       "description": "Wi-Fi, Bluetooth, BLE, IoT radio, SDR security testing",
       "category": "security",
       "tags": ["command"],
-      "metadata": { "chains_to": [] }
+      "metadata": { "chains_to": ["pentest-report"] }
     },
     {
       "name": "red-team-ops",
@@ -354,8 +354,8 @@
       "version": "1.0.0",
       "description": "Adversary simulation, attack chains, MITRE ATT&CK, C2 infrastructure",
       "category": "security",
-      "tags": ["command"],
-      "metadata": { "chains_to": [] }
+      "tags": ["command", "agent"],
+      "metadata": { "chains_to": ["pentest-report"] }
     },
     {
       "name": "reverse-binary",
@@ -363,8 +363,8 @@
       "version": "1.0.0",
       "description": "PE/ELF/Mach-O analysis, disassembly, decompilation, Ghidra/IDA",
       "category": "reverse",
-      "tags": ["command"],
-      "metadata": { "chains_to": [] }
+      "tags": ["command", "agent"],
+      "metadata": { "chains_to": ["reverse-obfuscation"] }
     },
     {
       "name": "reverse-firmware",
@@ -373,7 +373,7 @@
       "description": "Firmware extraction, embedded systems, UART/JTAG, emulation",
       "category": "reverse",
       "tags": ["command"],
-      "metadata": { "chains_to": [] }
+      "metadata": { "chains_to": ["reverse-binary"] }
     },
     {
       "name": "reverse-malware",
@@ -408,7 +408,7 @@
       "version": "1.0.0",
       "description": "SAST-style code review, CWE mapping, vulnerability patterns",
       "category": "security",
-      "tags": ["command"],
+      "tags": ["command", "agent", "hook", "script"],
       "metadata": { "chains_to": [] }
     },
     {
@@ -417,7 +417,7 @@
       "version": "1.0.0",
       "description": "Generates specific, auditor-ready evidence artifacts",
       "category": "compliance",
-      "tags": ["skill"],
+      "tags": ["script", "skill"],
       "metadata": { "chains_to": [] }
     },
     {
@@ -436,7 +436,7 @@
       "description": "Auditor-ready control implementation narrative generator",
       "category": "compliance",
       "tags": ["skill"],
-      "metadata": { "chains_to": [] }
+      "metadata": { "chains_to": ["security-compliance-control-testing-worksheet"] }
     },
     {
       "name": "security-compliance-control-statement-enhancer",
@@ -454,7 +454,7 @@
       "description": "Control testing worksheet generator",
       "category": "compliance",
       "tags": ["skill"],
-      "metadata": { "chains_to": [] }
+      "metadata": { "chains_to": ["security-compliance-compliance-evidence-gen"] }
     },
     {
       "name": "security-compliance-inheritance-matrix-builder",
@@ -472,7 +472,7 @@
       "description": "ISO/IEC 27001:2022 internal audit findings assistant",
       "category": "compliance",
       "tags": ["skill"],
-      "metadata": { "chains_to": [] }
+      "metadata": { "chains_to": ["security-compliance-control-testing-worksheet"] }
     },
     {
       "name": "security-compliance-scrms-pdca",
@@ -490,7 +490,7 @@
       "description": "SCF Security, Compliance & Resilience Management System (SCRMS) framework guidance",
       "category": "compliance",
       "tags": ["command", "skill"],
-      "metadata": { "chains_to": [] }
+      "metadata": { "chains_to": ["security-compliance-control-narrative-writer"] }
     },
     {
       "name": "security-compliance-soc2-internal-audit",
@@ -499,7 +499,7 @@
       "description": "SOC 2 Type II internal audit assistant",
       "category": "compliance",
       "tags": ["skill"],
-      "metadata": { "chains_to": [] }
+      "metadata": { "chains_to": ["security-compliance-control-testing-worksheet"] }
     },
     {
       "name": "security-compliance-vendor-risk-assessment",
@@ -525,8 +525,8 @@
       "version": "1.0.0",
       "description": "STRIDE, DREAD, PASTA, attack trees, risk matrices",
       "category": "security",
-      "tags": ["command"],
-      "metadata": { "chains_to": [] }
+      "tags": ["command", "agent", "hook", "script"],
+      "metadata": { "chains_to": ["secure-code-review"] }
     },
     {
       "name": "token-tracker",
@@ -534,7 +534,7 @@
       "version": "1.0.0",
       "description": "Token usage tracking, cost estimation, and optimization tips per task",
       "category": "productivity",
-      "tags": ["command"],
+      "tags": ["command", "hook", "script"],
       "metadata": { "chains_to": [] }
     },
     {
