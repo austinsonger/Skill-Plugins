@@ -1,6 +1,6 @@
 #!/bin/bash
 # ============================================================================
-# ClaudeAdvancedPlugins Installer v2.0
+# Skills Plugins Installer v2.0
 # Installs Claude Code custom slash commands for advanced development,
 # security, game dev, and productivity workflows.
 #
@@ -55,7 +55,7 @@ ALL_CATEGORIES="backend frontend gamedev security blueteam reverse productivity 
 show_banner() {
     echo -e "${CYAN}${BOLD}"
     echo "  ╔══════════════════════════════════════════════════════════╗"
-    echo "  ║          Claude Advanced Plugins Installer v2.0          ║"
+    echo "  ║             Skills Plugins Installer v2.0                ║"
     echo "  ║                                                          ║"
     echo "  ║   Security · Red Team · Blue Team · Reverse Engineering  ║"
     echo "  ║   Game Dev · Backend · Frontend · AI Productivity        ║"
@@ -646,7 +646,7 @@ while [ $# -gt 0 ]; do
             ;;
         --uninstall|-u)
             show_banner
-            echo -e "${YELLOW}[*] Uninstalling all Claude Advanced Plugins...${NC}"
+            echo -e "${YELLOW}[*] Uninstalling all Skills Plugins...${NC}"
             removed=0
             for dir in "$PLUGINS_DIR"/*/; do
                 plugin_name=$(basename "$dir")

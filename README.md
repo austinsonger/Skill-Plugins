@@ -1,19 +1,21 @@
-# Claude Advanced Plugins
+# Skills Plugins
 
-A comprehensive collection of **48 advanced plugins** (55+ slash commands) for [Claude Code](https://docs.anthropic.com/en/docs/claude-code) covering cybersecurity, game development, frontend, backend, reverse engineering, and AI productivity.
+A collection of **60 plugins** (70+ slash commands) for [Claude Code](https://docs.anthropic.com/en/docs/claude-code) — and other AI tools that consume the Agent Skills format — covering cybersecurity, security & compliance, game development, frontend, backend, reverse engineering, and AI productivity.
 
-Each plugin installs as a **custom slash command** — type `/command-name` in Claude Code to activate.
+Each plugin installs as a **Claude Code slash command** (`~/.claude/commands/`) and/or as an **Agent Skill** (`~/.agents/skills/<name>/SKILL.md`). Type `/command-name` in Claude Code to activate.
 
 ## Quick Install
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/CyberSecurityUP/ClaudeAdvancedPlugins.git
+git clone https://github.com/austinsonger/ClaudeAdvancedPlugins.git
 cd ClaudeAdvancedPlugins
 
 # 2. Run the installer
 chmod +x install.sh
-./install.sh
+./install.sh                    # claude target (default)
+./install.sh --target agents    # install as ~/.agents/skills/<name>/
+./install.sh --target both      # install to both
 ```
 
 ### Install by Category

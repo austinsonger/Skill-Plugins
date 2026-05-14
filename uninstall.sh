@@ -1,7 +1,8 @@
 #!/bin/bash
 # ============================================================================
-# ClaudeAdvancedPlugins Uninstaller
-# Removes all installed Claude Code custom slash commands.
+# Skills Plugins Uninstaller
+# Removes installed slash commands from ~/.claude/commands/ and/or
+# agent skills from ~/.agents/skills/.
 # ============================================================================
 
 set -e
@@ -30,7 +31,7 @@ NC='\033[0m'
 
 echo -e "${CYAN}${BOLD}"
 echo "  ╔══════════════════════════════════════════════════════╗"
-echo "  ║       Claude Advanced Plugins Uninstaller            ║"
+echo "  ║           Skills Plugins Uninstaller                 ║"
 echo "  ╚══════════════════════════════════════════════════════╝"
 echo -e "${NC}"
 
