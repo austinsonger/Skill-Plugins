@@ -1,0 +1,15 @@
+{
+  "name": "security-compliance-control-narrative-writer",
+  "version": "1.0.0",
+  "description": "Auditor-ready control implementation narrative generator",
+  "author": { "name": "Austin Songer" },
+  "homepage": "https://github.com/austinsonger/ClaudeAdvancedPlugins",
+  "repository": "https://github.com/austinsonger/ClaudeAdvancedPlugins",
+  "license": "MIT",
+  "category": "compliance",
+  "commands": "./commands",
+  "metadata": {
+    "badges": [],
+    "chains_to": []
+  }
+}

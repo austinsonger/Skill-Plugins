@@ -1,0 +1,15 @@
+{
+  "name": "blue-team-siem",
+  "version": "1.0.0",
+  "description": "Sigma rules, Splunk SPL, Elastic KQL/EQL, Sentinel KQL, detection engineering",
+  "author": { "name": "Austin Songer" },
+  "homepage": "https://github.com/austinsonger/ClaudeAdvancedPlugins",
+  "repository": "https://github.com/austinsonger/ClaudeAdvancedPlugins",
+  "license": "MIT",
+  "category": "blueteam",
+  "commands": "./commands",
+  "metadata": {
+    "badges": [],
+    "chains_to": []
+  }
+}

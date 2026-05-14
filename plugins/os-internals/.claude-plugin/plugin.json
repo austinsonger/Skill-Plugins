@@ -1,0 +1,15 @@
+{
+  "name": "os-internals",
+  "version": "1.0.0",
+  "description": "Linux/Windows/macOS kernel internals, system debugging",
+  "author": { "name": "Austin Songer" },
+  "homepage": "https://github.com/austinsonger/ClaudeAdvancedPlugins",
+  "repository": "https://github.com/austinsonger/ClaudeAdvancedPlugins",
+  "license": "MIT",
+  "category": "systems",
+  "commands": "./commands",
+  "metadata": {
+    "badges": [],
+    "chains_to": []
+  }
+}

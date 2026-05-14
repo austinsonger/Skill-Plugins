@@ -1,0 +1,15 @@
+{
+  "name": "gamedev-design",
+  "version": "1.0.0",
+  "description": "Game design core loops, balancing, ECS patterns, level design, GDD/TDD templates",
+  "author": { "name": "Austin Songer" },
+  "homepage": "https://github.com/austinsonger/ClaudeAdvancedPlugins",
+  "repository": "https://github.com/austinsonger/ClaudeAdvancedPlugins",
+  "license": "MIT",
+  "category": "gamedev",
+  "commands": "./commands",
+  "metadata": {
+    "badges": [],
+    "chains_to": []
+  }
+}

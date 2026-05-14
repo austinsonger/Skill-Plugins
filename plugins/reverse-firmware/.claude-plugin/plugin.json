@@ -1,0 +1,15 @@
+{
+  "name": "reverse-firmware",
+  "version": "1.0.0",
+  "description": "Firmware extraction, embedded systems, UART/JTAG, emulation",
+  "author": { "name": "Austin Songer" },
+  "homepage": "https://github.com/austinsonger/ClaudeAdvancedPlugins",
+  "repository": "https://github.com/austinsonger/ClaudeAdvancedPlugins",
+  "license": "MIT",
+  "category": "reverse",
+  "commands": "./commands",
+  "metadata": {
+    "badges": [],
+    "chains_to": []
+  }
+}

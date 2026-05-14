@@ -1,0 +1,15 @@
+{
+  "name": "hallucination-guard",
+  "version": "1.0.0",
+  "description": "Accuracy verification, confidence signaling, source validation",
+  "author": { "name": "Austin Songer" },
+  "homepage": "https://github.com/austinsonger/ClaudeAdvancedPlugins",
+  "repository": "https://github.com/austinsonger/ClaudeAdvancedPlugins",
+  "license": "MIT",
+  "category": "productivity",
+  "commands": "./commands",
+  "metadata": {
+    "badges": [],
+    "chains_to": []
+  }
+}

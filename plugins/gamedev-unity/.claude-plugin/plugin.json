@@ -1,0 +1,15 @@
+{
+  "name": "gamedev-unity",
+  "version": "1.0.0",
+  "description": "Unity MonoBehaviour, ScriptableObjects, ECS/DOTS, URP/HDRP, networking, editor tools",
+  "author": { "name": "Austin Songer" },
+  "homepage": "https://github.com/austinsonger/ClaudeAdvancedPlugins",
+  "repository": "https://github.com/austinsonger/ClaudeAdvancedPlugins",
+  "license": "MIT",
+  "category": "gamedev",
+  "commands": "./commands",
+  "metadata": {
+    "badges": [],
+    "chains_to": []
+  }
+}

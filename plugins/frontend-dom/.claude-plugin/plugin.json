@@ -1,0 +1,15 @@
+{
+  "name": "frontend-dom",
+  "version": "1.0.0",
+  "description": "DOM manipulation, Web Components, Shadow DOM, browser APIs",
+  "author": { "name": "Austin Songer" },
+  "homepage": "https://github.com/austinsonger/ClaudeAdvancedPlugins",
+  "repository": "https://github.com/austinsonger/ClaudeAdvancedPlugins",
+  "license": "MIT",
+  "category": "frontend",
+  "commands": "./commands",
+  "metadata": {
+    "badges": [],
+    "chains_to": []
+  }
+}

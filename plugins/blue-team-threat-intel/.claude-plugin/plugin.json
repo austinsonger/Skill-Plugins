@@ -1,0 +1,15 @@
+{
+  "name": "blue-team-threat-intel",
+  "version": "1.0.0",
+  "description": "CTI lifecycle, OSINT, actor profiling, STIX/TAXII, TLP classification",
+  "author": { "name": "Austin Songer" },
+  "homepage": "https://github.com/austinsonger/ClaudeAdvancedPlugins",
+  "repository": "https://github.com/austinsonger/ClaudeAdvancedPlugins",
+  "license": "MIT",
+  "category": "blueteam",
+  "commands": "./commands",
+  "metadata": {
+    "badges": [],
+    "chains_to": []
+  }
+}

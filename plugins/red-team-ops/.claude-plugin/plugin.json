@@ -1,0 +1,15 @@
+{
+  "name": "red-team-ops",
+  "version": "1.0.0",
+  "description": "Adversary simulation, attack chains, MITRE ATT&CK, C2 infrastructure",
+  "author": { "name": "Austin Songer" },
+  "homepage": "https://github.com/austinsonger/ClaudeAdvancedPlugins",
+  "repository": "https://github.com/austinsonger/ClaudeAdvancedPlugins",
+  "license": "MIT",
+  "category": "security",
+  "commands": "./commands",
+  "metadata": {
+    "badges": [],
+    "chains_to": []
+  }
+}

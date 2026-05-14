@@ -1,0 +1,15 @@
+{
+  "name": "security-compliance-compliance-evidence-guide",
+  "version": "1.0.0",
+  "description": "Generates auditor-ready compliance evidence collection guides",
+  "author": { "name": "Austin Songer" },
+  "homepage": "https://github.com/austinsonger/ClaudeAdvancedPlugins",
+  "repository": "https://github.com/austinsonger/ClaudeAdvancedPlugins",
+  "license": "MIT",
+  "category": "compliance",
+  "commands": "./commands",
+  "metadata": {
+    "badges": [],
+    "chains_to": []
+  }
+}

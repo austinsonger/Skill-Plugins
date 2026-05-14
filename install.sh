@@ -19,9 +19,92 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PLUGINS_DIR="$SCRIPT_DIR/plugins"
 CLAUDE_COMMANDS_DIR="$HOME/.claude/commands"
 AGENTS_SKILLS_DIR="$HOME/.agents/skills"
+AGENTS_AGENTS_DIR="$HOME/.agents/agents"
+STATE_FILE="$HOME/.claude/.skills-plugins-state"
 
 # Install target: "claude" (default), "agents", or "both"
 TARGET="claude"
+
+# ---------------------------------------------------------------------------
+# Version helpers (Phase C from the marketplace plan)
+# Read the repo's declared version for <plugin> from .claude-plugin/plugin.json.
+# Returns empty string if no manifest exists (e.g. plugins still mid-migration).
+# ---------------------------------------------------------------------------
+read_plugin_version() {
+    local plugin_name="$1"
+    local manifest="$PLUGINS_DIR/$plugin_name/.claude-plugin/plugin.json"
+    [ -f "$manifest" ] || { echo ""; return; }
+    grep -E '"version"[[:space:]]*:' "$manifest" \
+        | head -1 \
+        | sed -E 's/.*"version"[[:space:]]*:[[:space:]]*"([^"]*)".*/\1/'
+}
+
+# Look up the installed version recorded in the state file.
+# State line format: <plugin>=<version>=<target>
+read_installed_version() {
+    local plugin_name="$1" target="$2"
+    [ -f "$STATE_FILE" ] || { echo ""; return; }
+    grep -E "^${plugin_name}=[^=]+=${target}$" "$STATE_FILE" \
+        | head -1 \
+        | cut -d= -f2
+}
+
+# Record an installation in the state file (overwrites any prior entry for the
+# same plugin+target pair).
+record_install() {
+    local plugin_name="$1" version="$2" target="$3"
+    [ -z "$version" ] && return 0
+    mkdir -p "$(dirname "$STATE_FILE")"
+    touch "$STATE_FILE"
+    local tmp="$(mktemp)"
+    grep -vE "^${plugin_name}=[^=]+=${target}$" "$STATE_FILE" > "$tmp" || true
+    echo "${plugin_name}=${version}=${target}" >> "$tmp"
+    mv "$tmp" "$STATE_FILE"
+}
+
+# Remove a plugin's state entries. Used by uninstall.sh as well.
+forget_install() {
+    local plugin_name="$1"
+    [ -f "$STATE_FILE" ] || return 0
+    local tmp="$(mktemp)"
+    grep -vE "^${plugin_name}=" "$STATE_FILE" > "$tmp" || true
+    mv "$tmp" "$STATE_FILE"
+}
+
+# Compare two semver-ish version strings.
+# Echoes "newer", "same", or "older" for $1 relative to $2.
+compare_versions() {
+    local a="$1" b="$2"
+    [ "$a" = "$b" ] && { echo "same"; return; }
+    local first
+    first="$(printf '%s\n%s\n' "$a" "$b" | sort -V | head -1)"
+    if [ "$first" = "$a" ]; then echo "older"; else echo "newer"; fi
+}
+
+# Decide whether to allow an install based on installed vs repo version.
+# Echoes "install", "skip", "downgrade-blocked", or "downgrade-forced".
+# Honors FORCE=true to bypass downgrade blocks.
+check_version_gate() {
+    local plugin_name="$1" target="$2"
+    local repo_ver installed_ver
+    repo_ver="$(read_plugin_version "$plugin_name")"
+    installed_ver="$(read_installed_version "$plugin_name" "$target")"
+
+    [ -z "$repo_ver" ] && { echo "install"; return; }       # no manifest, skip gate
+    [ -z "$installed_ver" ] && { echo "install"; return; }  # fresh install
+
+    case "$(compare_versions "$repo_ver" "$installed_ver")" in
+        newer) echo "install" ;;
+        same)  echo "same" ;;
+        older)
+            if [ "$FORCE" = "true" ]; then
+                echo "downgrade-forced"
+            else
+                echo "downgrade-blocked"
+            fi
+            ;;
+    esac
+}
 
 # Colors
 RED='\033[0;31m'
@@ -369,17 +452,42 @@ install_plugin() {
     layout=$(detect_layout "$plugin_name")
 
     case "$layout" in
-        skill)
-            if install_skill_plugin "$plugin_name"; then
-                echo -e "${GREEN}  [+] $plugin_name${NC} — skill"
-            fi
-            return
-            ;;
         none)
             echo -e "${RED}  [-] Plugin not found: $plugin_name${NC}"
             return 1
             ;;
     esac
+
+    # Version gate: when both an installed and a repo version are known, refuse
+    # silent downgrades unless the caller passed --force.
+    local repo_ver
+    repo_ver="$(read_plugin_version "$plugin_name")"
+    local primary_target="$TARGET"
+    [ "$primary_target" = "both" ] && primary_target="claude"
+    local gate
+    gate="$(check_version_gate "$plugin_name" "$primary_target")"
+    case "$gate" in
+        downgrade-blocked)
+            local installed_ver
+            installed_ver="$(read_installed_version "$plugin_name" "$primary_target")"
+            echo -e "${YELLOW}  [!] $plugin_name: refusing downgrade (installed=$installed_ver repo=$repo_ver). Use --force to override.${NC}"
+            SKIPPED=$((SKIPPED + 1))
+            return 0
+            ;;
+    esac
+
+    if [ "$layout" = "skill" ]; then
+        if install_skill_plugin "$plugin_name"; then
+            local version_label="${repo_ver:+ v$repo_ver}"
+            echo -e "${GREEN}  [+] $plugin_name${NC} — skill$version_label"
+            record_install "$plugin_name" "$repo_ver" "claude"
+            record_install "$plugin_name" "$repo_ver" "agents"
+        fi
+        # Also install any agents/<name>.md the plugin ships (agents target only;
+        # Claude Code's marketplace handles the claude target natively).
+        install_plugin_agents "$plugin_name"
+        return
+    fi
 
     # legacy layout: plugins/<name>/commands/*.md
     local plugin_dir="$PLUGINS_DIR/$plugin_name/commands"
@@ -411,8 +519,34 @@ install_plugin() {
         fi
     done
 
+    install_plugin_agents "$plugin_name"
+
     if [ $count -gt 0 ]; then
-        echo -e "${GREEN}  [+] $plugin_name${NC} — $count command(s)"
+        local version_label="${repo_ver:+ v$repo_ver}"
+        echo -e "${GREEN}  [+] $plugin_name${NC} — $count command(s)$version_label"
+        record_install "$plugin_name" "$repo_ver" "claude"
+        [ "$TARGET" = "both" ] || [ "$TARGET" = "agents" ] && record_install "$plugin_name" "$repo_ver" "agents"
+    fi
+}
+
+# Copy plugins/<name>/agents/*.md to ~/.agents/agents/ when the agents target
+# is selected. Claude Code's marketplace install reads the plugin's agents/
+# directory natively, so the claude target is a no-op here.
+install_plugin_agents() {
+    local plugin_name="$1"
+    local agents_src="$PLUGINS_DIR/$plugin_name/agents"
+    [ -d "$agents_src" ] || return 0
+    if [ "$TARGET" = "agents" ] || [ "$TARGET" = "both" ]; then
+        mkdir -p "$AGENTS_AGENTS_DIR"
+        for agent_file in "$agents_src"/*.md; do
+            [ -f "$agent_file" ] || continue
+            local fname=$(basename "$agent_file")
+            if [ -f "$AGENTS_AGENTS_DIR/$fname" ] && [ "$FORCE" != "true" ]; then
+                continue
+            fi
+            cp "$agent_file" "$AGENTS_AGENTS_DIR/$fname"
+            echo -e "    ${DIM}↳ agent: $fname${NC}"
+        done
     fi
 }
 
@@ -540,6 +674,28 @@ show_status() {
     echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
     echo -e "  Total: ${GREEN}$installed_count${NC} / $total_count commands installed"
     echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+
+    if [ -f "$STATE_FILE" ]; then
+        echo ""
+        echo -e "${BOLD}Tracked versions (from $STATE_FILE):${NC}"
+        local line plugin ver target repo_ver tag
+        while IFS= read -r line; do
+            [ -z "$line" ] && continue
+            plugin="$(echo "$line" | cut -d= -f1)"
+            ver="$(echo "$line" | cut -d= -f2)"
+            target="$(echo "$line" | cut -d= -f3)"
+            repo_ver="$(read_plugin_version "$plugin")"
+            tag=""
+            if [ -n "$repo_ver" ]; then
+                case "$(compare_versions "$repo_ver" "$ver")" in
+                    same)  tag="${DIM}up-to-date${NC}" ;;
+                    newer) tag="${YELLOW}update available → $repo_ver${NC}" ;;
+                    older) tag="${YELLOW}repo older than installed${NC}" ;;
+                esac
+            fi
+            echo -e "  ${MAGENTA}$plugin${NC} ${DIM}($target)${NC} v$ver  $tag"
+        done < "$STATE_FILE"
+    fi
 }
 
 interactive_install() {

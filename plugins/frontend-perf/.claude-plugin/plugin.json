@@ -1,0 +1,15 @@
+{
+  "name": "frontend-perf",
+  "version": "1.0.0",
+  "description": "Core Web Vitals, bundle optimization, code splitting, rendering performance",
+  "author": { "name": "Austin Songer" },
+  "homepage": "https://github.com/austinsonger/ClaudeAdvancedPlugins",
+  "repository": "https://github.com/austinsonger/ClaudeAdvancedPlugins",
+  "license": "MIT",
+  "category": "frontend",
+  "commands": "./commands",
+  "metadata": {
+    "badges": [],
+    "chains_to": []
+  }
+}

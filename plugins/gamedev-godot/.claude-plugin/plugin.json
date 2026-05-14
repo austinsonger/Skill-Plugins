@@ -1,0 +1,15 @@
+{
+  "name": "gamedev-godot",
+  "version": "1.0.0",
+  "description": "Godot 4 nodes, GDScript, state machines, physics, scenes",
+  "author": { "name": "Austin Songer" },
+  "homepage": "https://github.com/austinsonger/ClaudeAdvancedPlugins",
+  "repository": "https://github.com/austinsonger/ClaudeAdvancedPlugins",
+  "license": "MIT",
+  "category": "gamedev",
+  "commands": "./commands",
+  "metadata": {
+    "badges": [],
+    "chains_to": []
+  }
+}

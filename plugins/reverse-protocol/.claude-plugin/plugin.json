@@ -1,0 +1,15 @@
+{
+  "name": "reverse-protocol",
+  "version": "1.0.0",
+  "description": "Network protocol RE, binary format analysis, Wireshark dissectors",
+  "author": { "name": "Austin Songer" },
+  "homepage": "https://github.com/austinsonger/ClaudeAdvancedPlugins",
+  "repository": "https://github.com/austinsonger/ClaudeAdvancedPlugins",
+  "license": "MIT",
+  "category": "reverse",
+  "commands": "./commands",
+  "metadata": {
+    "badges": [],
+    "chains_to": []
+  }
+}

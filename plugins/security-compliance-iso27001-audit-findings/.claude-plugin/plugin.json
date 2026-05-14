@@ -1,0 +1,15 @@
+{
+  "name": "security-compliance-iso27001-audit-findings",
+  "version": "1.0.0",
+  "description": "ISO/IEC 27001:2022 internal audit findings assistant",
+  "author": { "name": "Austin Songer" },
+  "homepage": "https://github.com/austinsonger/ClaudeAdvancedPlugins",
+  "repository": "https://github.com/austinsonger/ClaudeAdvancedPlugins",
+  "license": "MIT",
+  "category": "compliance",
+  "commands": "./commands",
+  "metadata": {
+    "badges": [],
+    "chains_to": []
+  }
+}

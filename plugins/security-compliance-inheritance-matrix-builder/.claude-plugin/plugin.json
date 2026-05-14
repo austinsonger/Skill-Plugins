@@ -1,0 +1,15 @@
+{
+  "name": "security-compliance-inheritance-matrix-builder",
+  "version": "1.0.0",
+  "description": "Build control inheritance matrices across CSP / customer boundaries",
+  "author": { "name": "Austin Songer" },
+  "homepage": "https://github.com/austinsonger/ClaudeAdvancedPlugins",
+  "repository": "https://github.com/austinsonger/ClaudeAdvancedPlugins",
+  "license": "MIT",
+  "category": "compliance",
+  "commands": "./commands",
+  "metadata": {
+    "badges": [],
+    "chains_to": []
+  }
+}

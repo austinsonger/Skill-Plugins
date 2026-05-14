@@ -11,6 +11,17 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PLUGINS_DIR="$SCRIPT_DIR/plugins"
 CLAUDE_COMMANDS_DIR="$HOME/.claude/commands"
 AGENTS_SKILLS_DIR="$HOME/.agents/skills"
+AGENTS_AGENTS_DIR="$HOME/.agents/agents"
+STATE_FILE="$HOME/.claude/.skills-plugins-state"
+
+forget_install() {
+    local plugin_name="$1"
+    [ -f "$STATE_FILE" ] || return 0
+    local tmp
+    tmp="$(mktemp)"
+    grep -vE "^${plugin_name}=" "$STATE_FILE" > "$tmp" || true
+    mv "$tmp" "$STATE_FILE"
+}
 
 # Target: "claude", "agents", or "both" (default)
 TARGET="${1:-both}"
@@ -78,6 +89,21 @@ for dir in "$PLUGINS_DIR"/*/; do
             fi
         fi
     done
+
+    # Sub-agents copied by --target agents installs.
+    if [ -d "$dir/agents" ] && { [ "$TARGET" = "agents" ] || [ "$TARGET" = "both" ]; }; then
+        for agent_file in "$dir/agents/"*.md; do
+            [ -f "$agent_file" ] || continue
+            fname=$(basename "$agent_file")
+            if [ -f "$AGENTS_AGENTS_DIR/$fname" ]; then
+                rm "$AGENTS_AGENTS_DIR/$fname"
+                echo -e "${RED}  [-] Removed (agents/agents): $fname${NC}"
+                REMOVED=$((REMOVED + 1))
+            fi
+        done
+    fi
+
+    forget_install "$plugin_name"
 done
 
 echo ""

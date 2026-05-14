@@ -1,0 +1,15 @@
+{
+  "name": "gamedev-threejs",
+  "version": "1.0.0",
+  "description": "Three.js browser games, ECS, Rapier physics, R3F, custom shaders",
+  "author": { "name": "Austin Songer" },
+  "homepage": "https://github.com/austinsonger/ClaudeAdvancedPlugins",
+  "repository": "https://github.com/austinsonger/ClaudeAdvancedPlugins",
+  "license": "MIT",
+  "category": "gamedev",
+  "commands": "./commands",
+  "metadata": {
+    "badges": [],
+    "chains_to": []
+  }
+}

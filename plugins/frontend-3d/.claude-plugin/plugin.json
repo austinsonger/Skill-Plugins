@@ -1,0 +1,15 @@
+{
+  "name": "frontend-3d",
+  "version": "1.0.0",
+  "description": "Three.js, React Three Fiber, WebGL, GLSL shaders, 3D scenes",
+  "author": { "name": "Austin Songer" },
+  "homepage": "https://github.com/austinsonger/ClaudeAdvancedPlugins",
+  "repository": "https://github.com/austinsonger/ClaudeAdvancedPlugins",
+  "license": "MIT",
+  "category": "frontend",
+  "commands": "./commands",
+  "metadata": {
+    "badges": [],
+    "chains_to": []
+  }
+}

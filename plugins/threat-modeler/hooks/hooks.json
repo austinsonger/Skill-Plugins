@@ -1,0 +1,14 @@
+{
+  "UserPromptSubmit": [
+    {
+      "matcher": "",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "${CLAUDE_PLUGIN_ROOT}/scripts/suggest-threat-model.sh",
+          "timeout": 5
+        }
+      ]
+    }
+  ]
+}

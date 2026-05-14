@@ -1,0 +1,15 @@
+{
+  "name": "cloud-security",
+  "version": "1.0.0",
+  "description": "Cloud security architecture, landing zones, IAM, multi-cloud design",
+  "author": { "name": "Austin Songer" },
+  "homepage": "https://github.com/austinsonger/ClaudeAdvancedPlugins",
+  "repository": "https://github.com/austinsonger/ClaudeAdvancedPlugins",
+  "license": "MIT",
+  "category": "systems",
+  "commands": "./commands",
+  "metadata": {
+    "badges": [],
+    "chains_to": []
+  }
+}

@@ -1,0 +1,550 @@
+{
+  "name": "skills-plugins",
+  "owner": { "name": "Austin Songer", "email": "asonger.pixel@gmail.com" },
+  "metadata": {
+    "description": "Skills Plugins — a Claude Code marketplace + Agent Skills catalog of 60+ plugins (security, blue team, reverse engineering, frontend, backend, gamedev, compliance, productivity).",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "api-security",
+      "source": "./plugins/api-security",
+      "version": "1.0.0",
+      "description": "OWASP API Top 10, GraphQL/gRPC/WebSocket testing",
+      "category": "security",
+      "tags": ["command"],
+      "metadata": { "chains_to": [] }
+    },
+    {
+      "name": "backend-architect",
+      "source": "./plugins/backend-architect",
+      "version": "1.0.0",
+      "description": "System architecture, API design, database optimization, scalability patterns",
+      "category": "backend",
+      "tags": ["command"],
+      "metadata": { "chains_to": [] }
+    },
+    {
+      "name": "blue-team-dfir",
+      "source": "./plugins/blue-team-dfir",
+      "version": "1.0.0",
+      "description": "Digital forensics, incident response, evidence handling, NIST SP 800-61",
+      "category": "blueteam",
+      "tags": ["command"],
+      "metadata": { "chains_to": [] }
+    },
+    {
+      "name": "blue-team-edr",
+      "source": "./plugins/blue-team-edr",
+      "version": "1.0.0",
+      "description": "EDR/XDR analysis, Sysmon configuration, endpoint threat hunting",
+      "category": "blueteam",
+      "tags": ["command"],
+      "metadata": { "chains_to": [] }
+    },
+    {
+      "name": "blue-team-hardening",
+      "source": "./plugins/blue-team-hardening",
+      "version": "1.0.0",
+      "description": "CIS Benchmarks, STIGs, Windows/Linux/container/cloud hardening",
+      "category": "blueteam",
+      "tags": ["command"],
+      "metadata": { "chains_to": [] }
+    },
+    {
+      "name": "blue-team-malware-analysis",
+      "source": "./plugins/blue-team-malware-analysis",
+      "version": "1.0.0",
+      "description": "Static/dynamic malware analysis, YARA rules, behavioral analysis",
+      "category": "blueteam",
+      "tags": ["command"],
+      "metadata": { "chains_to": [] }
+    },
+    {
+      "name": "blue-team-network-defense",
+      "source": "./plugins/blue-team-network-defense",
+      "version": "1.0.0",
+      "description": "IDS/IPS, firewall management, network monitoring, Suricata/Zeek rules",
+      "category": "blueteam",
+      "tags": ["command"],
+      "metadata": { "chains_to": [] }
+    },
+    {
+      "name": "blue-team-siem",
+      "source": "./plugins/blue-team-siem",
+      "version": "1.0.0",
+      "description": "Sigma rules, Splunk SPL, Elastic KQL/EQL, Sentinel KQL, detection engineering",
+      "category": "blueteam",
+      "tags": ["command"],
+      "metadata": { "chains_to": [] }
+    },
+    {
+      "name": "blue-team-soc",
+      "source": "./plugins/blue-team-soc",
+      "version": "1.0.0",
+      "description": "SOC operations, alert triage, Tier 1-3 analysis, incident investigation",
+      "category": "blueteam",
+      "tags": ["command"],
+      "metadata": { "chains_to": [] }
+    },
+    {
+      "name": "blue-team-threat-intel",
+      "source": "./plugins/blue-team-threat-intel",
+      "version": "1.0.0",
+      "description": "CTI lifecycle, OSINT, actor profiling, STIX/TAXII, TLP classification",
+      "category": "blueteam",
+      "tags": ["command"],
+      "metadata": { "chains_to": [] }
+    },
+    {
+      "name": "cloud-security",
+      "source": "./plugins/cloud-security",
+      "version": "1.0.0",
+      "description": "Cloud security architecture, landing zones, IAM, multi-cloud design",
+      "category": "systems",
+      "tags": ["command"],
+      "metadata": { "chains_to": [] }
+    },
+    {
+      "name": "context-keeper",
+      "source": "./plugins/context-keeper",
+      "version": "1.0.0",
+      "description": "Maintains project context across sessions, auto-saves decisions and conventions",
+      "category": "productivity",
+      "tags": ["command"],
+      "metadata": { "chains_to": [] }
+    },
+    {
+      "name": "context-manager",
+      "source": "./plugins/context-manager",
+      "version": "1.0.0",
+      "description": "Context window optimization, smart file loading",
+      "category": "productivity",
+      "tags": ["command"],
+      "metadata": { "chains_to": [] }
+    },
+    {
+      "name": "crypto-analysis",
+      "source": "./plugins/crypto-analysis",
+      "version": "1.0.0",
+      "description": "Cryptographic auditing, RSA/ECC attacks, TLS analysis, key management",
+      "category": "security",
+      "tags": ["command"],
+      "metadata": { "chains_to": [] }
+    },
+    {
+      "name": "devsecops",
+      "source": "./plugins/devsecops",
+      "version": "1.0.0",
+      "description": "CI/CD security, SAST/DAST/SCA integration, security pipeline design",
+      "category": "security",
+      "tags": ["command"],
+      "metadata": { "chains_to": [] }
+    },
+    {
+      "name": "exploit-dev",
+      "source": "./plugins/exploit-dev",
+      "version": "1.0.0",
+      "description": "Binary exploitation, ROP chains, heap techniques, CTF solving",
+      "category": "security",
+      "tags": ["command"],
+      "metadata": { "chains_to": [] }
+    },
+    {
+      "name": "frontend-3d",
+      "source": "./plugins/frontend-3d",
+      "version": "1.0.0",
+      "description": "Three.js, React Three Fiber, WebGL, GLSL shaders, 3D scenes",
+      "category": "frontend",
+      "tags": ["command"],
+      "metadata": { "chains_to": [] }
+    },
+    {
+      "name": "frontend-animations",
+      "source": "./plugins/frontend-animations",
+      "version": "1.0.0",
+      "description": "CSS/GSAP/Framer Motion animations, micro-interactions, scroll effects",
+      "category": "frontend",
+      "tags": ["command"],
+      "metadata": { "chains_to": [] }
+    },
+    {
+      "name": "frontend-dom",
+      "source": "./plugins/frontend-dom",
+      "version": "1.0.0",
+      "description": "DOM manipulation, Web Components, Shadow DOM, browser APIs",
+      "category": "frontend",
+      "tags": ["command"],
+      "metadata": { "chains_to": [] }
+    },
+    {
+      "name": "frontend-forge",
+      "source": "./plugins/frontend-forge",
+      "version": "1.0.0",
+      "description": "Component architecture, accessibility, design systems, TypeScript",
+      "category": "frontend",
+      "tags": ["command"],
+      "metadata": { "chains_to": [] }
+    },
+    {
+      "name": "frontend-micro",
+      "source": "./plugins/frontend-micro",
+      "version": "1.0.0",
+      "description": "Micro-frontends, Module Federation, state machines, monorepo architecture",
+      "category": "frontend",
+      "tags": ["command"],
+      "metadata": { "chains_to": [] }
+    },
+    {
+      "name": "frontend-perf",
+      "source": "./plugins/frontend-perf",
+      "version": "1.0.0",
+      "description": "Core Web Vitals, bundle optimization, code splitting, rendering performance",
+      "category": "frontend",
+      "tags": ["command"],
+      "metadata": { "chains_to": [] }
+    },
+    {
+      "name": "gamedev-design",
+      "source": "./plugins/gamedev-design",
+      "version": "1.0.0",
+      "description": "Game design core loops, balancing, ECS patterns, level design, GDD/TDD templates",
+      "category": "gamedev",
+      "tags": ["command"],
+      "metadata": { "chains_to": [] }
+    },
+    {
+      "name": "gamedev-godot",
+      "source": "./plugins/gamedev-godot",
+      "version": "1.0.0",
+      "description": "Godot 4 nodes, GDScript, state machines, physics, scenes",
+      "category": "gamedev",
+      "tags": ["command"],
+      "metadata": { "chains_to": [] }
+    },
+    {
+      "name": "gamedev-threejs",
+      "source": "./plugins/gamedev-threejs",
+      "version": "1.0.0",
+      "description": "Three.js browser games, ECS, Rapier physics, R3F, custom shaders",
+      "category": "gamedev",
+      "tags": ["command"],
+      "metadata": { "chains_to": [] }
+    },
+    {
+      "name": "gamedev-unity",
+      "source": "./plugins/gamedev-unity",
+      "version": "1.0.0",
+      "description": "Unity MonoBehaviour, ScriptableObjects, ECS/DOTS, URP/HDRP, networking, editor tools",
+      "category": "gamedev",
+      "tags": ["command"],
+      "metadata": { "chains_to": [] }
+    },
+    {
+      "name": "gamedev-unreal",
+      "source": "./plugins/gamedev-unreal",
+      "version": "1.0.0",
+      "description": "Unreal Engine UObject system, GAS, Enhanced Input, Nanite/Lumen, Blueprints",
+      "category": "gamedev",
+      "tags": ["command"],
+      "metadata": { "chains_to": [] }
+    },
+    {
+      "name": "hallucination-guard",
+      "source": "./plugins/hallucination-guard",
+      "version": "1.0.0",
+      "description": "Accuracy verification, confidence signaling, source validation",
+      "category": "productivity",
+      "tags": ["command"],
+      "metadata": { "chains_to": [] }
+    },
+    {
+      "name": "memory-vault",
+      "source": "./plugins/memory-vault",
+      "version": "1.0.0",
+      "description": "Persistent cross-session knowledge management",
+      "category": "productivity",
+      "tags": ["command"],
+      "metadata": { "chains_to": [] }
+    },
+    {
+      "name": "os-internals",
+      "source": "./plugins/os-internals",
+      "version": "1.0.0",
+      "description": "Linux/Windows/macOS kernel internals, system debugging",
+      "category": "systems",
+      "tags": ["command"],
+      "metadata": { "chains_to": [] }
+    },
+    {
+      "name": "pentest-ad",
+      "source": "./plugins/pentest-ad",
+      "version": "1.0.0",
+      "description": "Active Directory attacks, Kerberos, ADCS, BloodHound, delegation abuse",
+      "category": "security",
+      "tags": ["command"],
+      "metadata": { "chains_to": [] }
+    },
+    {
+      "name": "pentest-cloud",
+      "source": "./plugins/pentest-cloud",
+      "version": "1.0.0",
+      "description": "AWS/Azure/GCP security testing, IAM exploitation, privilege escalation",
+      "category": "security",
+      "tags": ["command"],
+      "metadata": { "chains_to": [] }
+    },
+    {
+      "name": "pentest-mobile",
+      "source": "./plugins/pentest-mobile",
+      "version": "1.0.0",
+      "description": "Android/iOS app testing, Frida, OWASP MASTG/MASVS",
+      "category": "security",
+      "tags": ["command"],
+      "metadata": { "chains_to": [] }
+    },
+    {
+      "name": "pentest-network",
+      "source": "./plugins/pentest-network",
+      "version": "1.0.0",
+      "description": "Network infrastructure testing, service enumeration, network exploitation",
+      "category": "security",
+      "tags": ["command"],
+      "metadata": { "chains_to": [] }
+    },
+    {
+      "name": "pentest-report",
+      "source": "./plugins/pentest-report",
+      "version": "1.0.0",
+      "description": "Professional pentest report writing, CVSS scoring, executive summaries",
+      "category": "security",
+      "tags": ["command"],
+      "metadata": { "chains_to": [] }
+    },
+    {
+      "name": "pentest-social",
+      "source": "./plugins/pentest-social",
+      "version": "1.0.0",
+      "description": "Social engineering campaigns, phishing, vishing, OSINT, physical SE",
+      "category": "security",
+      "tags": ["command"],
+      "metadata": { "chains_to": [] }
+    },
+    {
+      "name": "pentest-toolkit",
+      "source": "./plugins/pentest-toolkit",
+      "version": "1.0.0",
+      "description": "PTES methodology, OWASP Top 10, web/API vulnerability assessment",
+      "category": "security",
+      "tags": ["command"],
+      "metadata": { "chains_to": [] }
+    },
+    {
+      "name": "pentest-wireless",
+      "source": "./plugins/pentest-wireless",
+      "version": "1.0.0",
+      "description": "Wi-Fi, Bluetooth, BLE, IoT radio, SDR security testing",
+      "category": "security",
+      "tags": ["command"],
+      "metadata": { "chains_to": [] }
+    },
+    {
+      "name": "red-team-ops",
+      "source": "./plugins/red-team-ops",
+      "version": "1.0.0",
+      "description": "Adversary simulation, attack chains, MITRE ATT&CK, C2 infrastructure",
+      "category": "security",
+      "tags": ["command"],
+      "metadata": { "chains_to": [] }
+    },
+    {
+      "name": "reverse-binary",
+      "source": "./plugins/reverse-binary",
+      "version": "1.0.0",
+      "description": "PE/ELF/Mach-O analysis, disassembly, decompilation, Ghidra/IDA",
+      "category": "reverse",
+      "tags": ["command"],
+      "metadata": { "chains_to": [] }
+    },
+    {
+      "name": "reverse-firmware",
+      "source": "./plugins/reverse-firmware",
+      "version": "1.0.0",
+      "description": "Firmware extraction, embedded systems, UART/JTAG, emulation",
+      "category": "reverse",
+      "tags": ["command"],
+      "metadata": { "chains_to": [] }
+    },
+    {
+      "name": "reverse-malware",
+      "source": "./plugins/reverse-malware",
+      "version": "1.0.0",
+      "description": "Malware reverse engineering, unpacking, C2 protocol analysis, config extraction",
+      "category": "reverse",
+      "tags": ["command"],
+      "metadata": { "chains_to": [] }
+    },
+    {
+      "name": "reverse-obfuscation",
+      "source": "./plugins/reverse-obfuscation",
+      "version": "1.0.0",
+      "description": "Deobfuscation, anti-debug bypass, anti-VM bypass, unpacking",
+      "category": "reverse",
+      "tags": ["command"],
+      "metadata": { "chains_to": [] }
+    },
+    {
+      "name": "reverse-protocol",
+      "source": "./plugins/reverse-protocol",
+      "version": "1.0.0",
+      "description": "Network protocol RE, binary format analysis, Wireshark dissectors",
+      "category": "reverse",
+      "tags": ["command"],
+      "metadata": { "chains_to": [] }
+    },
+    {
+      "name": "secure-code-review",
+      "source": "./plugins/secure-code-review",
+      "version": "1.0.0",
+      "description": "SAST-style code review, CWE mapping, vulnerability patterns",
+      "category": "security",
+      "tags": ["command"],
+      "metadata": { "chains_to": [] }
+    },
+    {
+      "name": "security-compliance-compliance-evidence-gen",
+      "source": "./plugins/security-compliance-compliance-evidence-gen",
+      "version": "1.0.0",
+      "description": "Generates specific, auditor-ready evidence artifacts",
+      "category": "compliance",
+      "tags": ["skill"],
+      "metadata": { "chains_to": [] }
+    },
+    {
+      "name": "security-compliance-compliance-evidence-guide",
+      "source": "./plugins/security-compliance-compliance-evidence-guide",
+      "version": "1.0.0",
+      "description": "Generates auditor-ready compliance evidence collection guides",
+      "category": "compliance",
+      "tags": ["script", "skill"],
+      "metadata": { "chains_to": [] }
+    },
+    {
+      "name": "security-compliance-control-narrative-writer",
+      "source": "./plugins/security-compliance-control-narrative-writer",
+      "version": "1.0.0",
+      "description": "Auditor-ready control implementation narrative generator",
+      "category": "compliance",
+      "tags": ["skill"],
+      "metadata": { "chains_to": [] }
+    },
+    {
+      "name": "security-compliance-control-statement-enhancer",
+      "source": "./plugins/security-compliance-control-statement-enhancer",
+      "version": "1.0.0",
+      "description": "Transforms basic security control statements into defensible auditor-ready text",
+      "category": "compliance",
+      "tags": ["skill"],
+      "metadata": { "chains_to": [] }
+    },
+    {
+      "name": "security-compliance-control-testing-worksheet",
+      "source": "./plugins/security-compliance-control-testing-worksheet",
+      "version": "1.0.0",
+      "description": "Control testing worksheet generator",
+      "category": "compliance",
+      "tags": ["skill"],
+      "metadata": { "chains_to": [] }
+    },
+    {
+      "name": "security-compliance-inheritance-matrix-builder",
+      "source": "./plugins/security-compliance-inheritance-matrix-builder",
+      "version": "1.0.0",
+      "description": "Build control inheritance matrices across CSP / customer boundaries",
+      "category": "compliance",
+      "tags": ["skill"],
+      "metadata": { "chains_to": [] }
+    },
+    {
+      "name": "security-compliance-iso27001-audit-findings",
+      "source": "./plugins/security-compliance-iso27001-audit-findings",
+      "version": "1.0.0",
+      "description": "ISO/IEC 27001:2022 internal audit findings assistant",
+      "category": "compliance",
+      "tags": ["skill"],
+      "metadata": { "chains_to": [] }
+    },
+    {
+      "name": "security-compliance-scrms-pdca",
+      "source": "./plugins/security-compliance-scrms-pdca",
+      "version": "1.0.0",
+      "description": "SCRMS Plan-Do-Check-Act cycle implementation guidance",
+      "category": "compliance",
+      "tags": ["script", "skill"],
+      "metadata": { "chains_to": [] }
+    },
+    {
+      "name": "security-compliance-scrms",
+      "source": "./plugins/security-compliance-scrms",
+      "version": "1.0.0",
+      "description": "SCF Security, Compliance & Resilience Management System (SCRMS) framework guidance",
+      "category": "compliance",
+      "tags": ["command", "skill"],
+      "metadata": { "chains_to": [] }
+    },
+    {
+      "name": "security-compliance-soc2-internal-audit",
+      "source": "./plugins/security-compliance-soc2-internal-audit",
+      "version": "1.0.0",
+      "description": "SOC 2 Type II internal audit assistant",
+      "category": "compliance",
+      "tags": ["skill"],
+      "metadata": { "chains_to": [] }
+    },
+    {
+      "name": "security-compliance-vendor-risk-assessment",
+      "source": "./plugins/security-compliance-vendor-risk-assessment",
+      "version": "1.0.0",
+      "description": "Third-party vendor risk assessment workflow",
+      "category": "compliance",
+      "tags": ["skill"],
+      "metadata": { "chains_to": [] }
+    },
+    {
+      "name": "supply-chain-sec",
+      "source": "./plugins/supply-chain-sec",
+      "version": "1.0.0",
+      "description": "Dependency attacks, SBOM, SLSA framework, build pipeline security",
+      "category": "security",
+      "tags": ["command"],
+      "metadata": { "chains_to": [] }
+    },
+    {
+      "name": "threat-modeler",
+      "source": "./plugins/threat-modeler",
+      "version": "1.0.0",
+      "description": "STRIDE, DREAD, PASTA, attack trees, risk matrices",
+      "category": "security",
+      "tags": ["command"],
+      "metadata": { "chains_to": [] }
+    },
+    {
+      "name": "token-tracker",
+      "source": "./plugins/token-tracker",
+      "version": "1.0.0",
+      "description": "Token usage tracking, cost estimation, and optimization tips per task",
+      "category": "productivity",
+      "tags": ["command"],
+      "metadata": { "chains_to": [] }
+    },
+    {
+      "name": "vuln-research",
+      "source": "./plugins/vuln-research",
+      "version": "1.0.0",
+      "description": "Vulnerability discovery, fuzzing, CodeQL, responsible disclosure",
+      "category": "security",
+      "tags": ["command"],
+      "metadata": { "chains_to": [] }
+    }
+  ]
+}

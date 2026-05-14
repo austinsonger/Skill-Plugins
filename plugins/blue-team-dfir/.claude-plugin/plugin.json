@@ -1,0 +1,15 @@
+{
+  "name": "blue-team-dfir",
+  "version": "1.0.0",
+  "description": "Digital forensics, incident response, evidence handling, NIST SP 800-61",
+  "author": { "name": "Austin Songer" },
+  "homepage": "https://github.com/austinsonger/ClaudeAdvancedPlugins",
+  "repository": "https://github.com/austinsonger/ClaudeAdvancedPlugins",
+  "license": "MIT",
+  "category": "blueteam",
+  "commands": "./commands",
+  "metadata": {
+    "badges": [],
+    "chains_to": []
+  }
+}

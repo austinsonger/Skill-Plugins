@@ -1,0 +1,15 @@
+{
+  "name": "threat-modeler",
+  "version": "1.0.0",
+  "description": "STRIDE, DREAD, PASTA, attack trees, risk matrices",
+  "author": { "name": "Austin Songer" },
+  "homepage": "https://github.com/austinsonger/ClaudeAdvancedPlugins",
+  "repository": "https://github.com/austinsonger/ClaudeAdvancedPlugins",
+  "license": "MIT",
+  "category": "security",
+  "commands": "./commands",
+  "metadata": {
+    "badges": [],
+    "chains_to": []
+  }
+}

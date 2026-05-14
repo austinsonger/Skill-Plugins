@@ -1,0 +1,15 @@
+{
+  "name": "security-compliance-soc2-internal-audit",
+  "version": "1.0.0",
+  "description": "SOC 2 Type II internal audit assistant",
+  "author": { "name": "Austin Songer" },
+  "homepage": "https://github.com/austinsonger/ClaudeAdvancedPlugins",
+  "repository": "https://github.com/austinsonger/ClaudeAdvancedPlugins",
+  "license": "MIT",
+  "category": "compliance",
+  "commands": "./commands",
+  "metadata": {
+    "badges": [],
+    "chains_to": []
+  }
+}

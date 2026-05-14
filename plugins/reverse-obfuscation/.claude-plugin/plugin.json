@@ -1,0 +1,15 @@
+{
+  "name": "reverse-obfuscation",
+  "version": "1.0.0",
+  "description": "Deobfuscation, anti-debug bypass, anti-VM bypass, unpacking",
+  "author": { "name": "Austin Songer" },
+  "homepage": "https://github.com/austinsonger/ClaudeAdvancedPlugins",
+  "repository": "https://github.com/austinsonger/ClaudeAdvancedPlugins",
+  "license": "MIT",
+  "category": "reverse",
+  "commands": "./commands",
+  "metadata": {
+    "badges": [],
+    "chains_to": []
+  }
+}

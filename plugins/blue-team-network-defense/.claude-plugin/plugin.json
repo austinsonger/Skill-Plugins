@@ -1,0 +1,15 @@
+{
+  "name": "blue-team-network-defense",
+  "version": "1.0.0",
+  "description": "IDS/IPS, firewall management, network monitoring, Suricata/Zeek rules",
+  "author": { "name": "Austin Songer" },
+  "homepage": "https://github.com/austinsonger/ClaudeAdvancedPlugins",
+  "repository": "https://github.com/austinsonger/ClaudeAdvancedPlugins",
+  "license": "MIT",
+  "category": "blueteam",
+  "commands": "./commands",
+  "metadata": {
+    "badges": [],
+    "chains_to": []
+  }
+}
